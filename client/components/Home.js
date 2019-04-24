@@ -34,17 +34,31 @@ class Home extends Component{
             return (
 			 <tr className="margin-top-5">
 			    <td><label>Question</label></td>
-			    <td><textarea className="input-box" name="ques_txt" rows="5" cols="30"></textarea></td> 
+			    <td className="flex-base"><textarea className="input-box" name="ques_txt" rows="5" cols="30"></textarea><a href="#popup1" className="btn-default"  onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a></td> 
 			  </tr>
             )
       }
 
       TF = ()=>{
             return (
-			  <tr className="margin-top-5">
-			    <td><label>Question2</label></td>
-			    <td><textarea className="input-box" name="ques_txt" rows="5" cols="30"></textarea></td> 
-			  </tr>
+               <Fragment>
+	              <tr className="margin-top-5">
+				    <td><label>Question</label></td>
+			         <td className="flex-base"><textarea className="input-box" name="ques_txt" rows="5" cols="30"></textarea><a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a></td> 
+				  </tr>
+				  <tr className="margin-top-5">
+				    <td><label>Common feed</label></td>
+				    <td className="flex-base"><textarea className="input-box" name="tf_ques_feed" rows="2" cols="10"></textarea><a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a></td> 
+				  </tr>
+				  <tr className="margin-top-5">
+				    <td><label>TrueInfo feed</label></td>
+				    <td className="flex-base"><textarea className="input-box" name="tf_true_feed" rows="2" cols="10"></textarea><a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a></td> 
+				  </tr>
+				  <tr className="margin-top-5">
+				    <td><label>FalseInfo feed</label></td>
+				    <td className="flex-base"><textarea className="input-box" name="tf_false_feed" rows="2" cols="10"></textarea><a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a></td> 
+				  </tr>
+               </Fragment>
             )
       }
       CA = ()=>{
@@ -55,9 +69,78 @@ class Home extends Component{
 			  </tr>
             )
       }
+
+      addTable = (e)=>{
+      	 //  e.preventDefault();
+      	   let row = parseInt(document.getElementById("table_row").value),
+      	       col = parseInt(document.getElementById("table_col").value);
+
+            console.log(document.getElementById("table_row"))
+
+               this.tableDataList(row, col);
+      //      let prev = document.getElementsByName(this.state.eleId)[0];
+ 
+      //      let data = `<![CDATA[<p></p><table><thead>
+						// <tr class="header">
+						// <th><em>Sept 2</em></th>
+						// <th><em>Sept 6</em></th>
+						// <th><em>Sept 10</em></th>
+						// </tr>
+						// </thead>
+						// <tbody>
+						// <tr class="odd">
+						// <td>1,000</td>
+						// <td>4,000</td>
+						// <td>200</td>
+						// </tr>
+					 //   </tbody></table>]]>`;
+      //      prev.value = data;
+      }
+
+      tableDataList = (row, col)=>{
+      	  let a = [];
+      	  let d = row*col;
+      	  let k = row;
+          let i = 1;
+      	  let h = d;
+
+      	  while(i<=h){
+      	  	 a.push(<input className={"input-table margin-ryt-10 tblhead_"+i} type="text" key={i} name="ques_topic" placeholder={'Heading'+i} />);
+             ++i;
+      	  }
+      	  a.push(<p className="margin-botm-15"></p>);
+      	  i = 1;
+      	  while(i<=k){
+      	  	  if(i%d==0){
+                 a.push(<input className="input-table margin-ryt-10" type="text" key={i+'_'} name="ques_topic" placeholder="Enter question topic" />);
+                 a.push(<p className="margin-botm-15"></p>);
+      	  	  }else{
+      	  	  	 a.push(<input className="input-table margin-ryt-10" type="text" key={i+'_'} name="ques_topic" placeholder="Enter question topic" />);
+      	  	  }
+      	  	  ++i;
+      	  }
+      	  return a;
+      }   
+
       render(){
       	 return(
            <Fragment>
+
+
+              <div id="popup1" className="overlay">
+				<div className="popup">
+					<a className="close" href="#">&times;</a>
+					<div className="content">
+						 {this.tableDataList() && this.tableDataList().map(x=>x)}
+					</div> 
+					<footer className="txt-right">
+					      <input className="input-table margin-ryt-10" type="text" id="table_row" placeholder="No of rows"/>
+					      <input className="input-table margin-ryt-10" type="text" id="table_col" placeholder="No of cols"/>
+					      <button className="btn-default margin-top-20" onClick={this.addTable}>Generate</button>
+					</footer>
+				</div>
+			</div>
+
 	           <main className="main-content-box">
 	        	 <div className="flex main-content-wrapper">
 		        	 <div className="flex space-bw main-content">
@@ -70,7 +153,7 @@ class Home extends Component{
 											    <td><input className="input-box" type="text" name="ques_id" placeholder="Enter ID"/></td> 
 											  </tr>
 										      <tr className="margin-top-5">
-											    <td><label>Problem type</label></td>
+											    <td><label>Type</label></td>
 											    <td>
 									        	  <select className="input-box" name="ques_type" onChange={this.handleChange}>
 									        	    <option value="SB">SB</option>
@@ -109,7 +192,7 @@ class Home extends Component{
 									</form>
 			        	 	  </div>
 	                          <div>
-	                          	<textarea id="show_xml" rows="30" cols="50" placeholder="Output as XML"></textarea>
+	                          	<textarea id="show_xml" rows="30" cols="70" placeholder="Output as XML"></textarea>
 	                          </div>
 			        	 	  
 		        	 </div>

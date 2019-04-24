@@ -240,22 +240,91 @@ function SB(question){
 	return "<sectionBreak><stem><![CDATA[<p>"+question+"</p>]]></stem></sectionBreak>";		    
 }
 
+function TF(question){
+	return `<trueFalse>
+		      <stem><![CDATA[<p>${question.ques_txt}</p>]]></stem>
+		      <commonFeedback><![CDATA[<p>${question.tf_ques_feed}</p>]]></commonFeedback>
+		      <trueInfo>
+		        <credit>1</credit>
+		        <feedback><![CDATA[<p>${question.tf_true_feed}</p>]]></feedback>
+		      </trueInfo>
+		      <falseInfo>
+		        <credit>0</credit>
+		        <feedback><![CDATA[<p>${question.tf_false_feed}</p>]]></feedback>
+		      </falseInfo>
+            </trueFalse>`;		    
+}
+
+
+
+
+
+function CA(question){
+	return `<checkAll>
+		      <stem><![CDATA[<p>cata&nbsp; question</p>]]></stem>
+		      <commonFeedback><![CDATA[<p>CATA feedback</p>]]></commonFeedback>
+		      <choices>
+		        <choice>
+		          <distractor><![CDATA[<p>dist 1</p>]]></distractor>
+		          <creditChecked>1</creditChecked>
+		          <creditUnchecked>0</creditUnchecked>
+		          <feedbackChecked></feedbackChecked>
+		          <feedbackUnchecked></feedbackUnchecked>											 
+		        </choice>
+		        <choice>
+		          <distractor><![CDATA[<p>dist 2</p>]]></distractor>
+		          <creditChecked>1</creditChecked>
+		          <creditUnchecked>0</creditUnchecked>
+		          <feedbackChecked></feedbackChecked>
+		          <feedbackUnchecked></feedbackUnchecked>											 
+		        </choice>
+		        <choice>
+		          <distractor><![CDATA[<p>dist 3</p>]]></distractor>
+		          <creditChecked>0</creditChecked>
+		          <creditUnchecked>1</creditUnchecked>
+		          <feedbackChecked></feedbackChecked>
+		          <feedbackUnchecked></feedbackUnchecked>											 
+		        </choice>
+		      </choices>
+		    </checkAll>`;		    
+}
+
+
 app.post('/', (req, res)=>{
 	    let text = null;
-        let question =   "<question><title><![CDATA[I am a section break]]></title>"+
-                         "<multipart>"+req.body.ques_id+"</multipart><type>"+req.body.ques_type+"</type><categories><internal_category>"+
-					     "<title><![CDATA[Learning Objective: 1.1 "+req.body.ques_obj+"]]></title></internal_category><internal_category><title><![CDATA[Topic: "+req.body.ques_topic+"]]></title></internal_category></categories>";
+        let question =   `<question>
+                          <title><![CDATA[I am a section break]]></title>
+                          <multipart>${req.body.ques_id}</multipart>
+                          <type>${req.body.ques_type}</type>
+                          <categories>
+                            <internal_category>
+					         <title><![CDATA[Learning Objective: 1.1 ${req.body.ques_obj}]]></title>
+					        </internal_category>
+					        <internal_category>
+					           <title><![CDATA[Topic: ${req.body.ques_topic}]]></title>
+					        </internal_category>
+					     </categories>`;
         
         if(req.body.ques_type=="SB"){
            question += SB(req.body.ques_txt)
         }
+        if(req.body.ques_type=="TF"){
+           question += TF(req.body)
+        }
+        if(req.body.ques_type=="CA"){
+           question += CA(req.body)
+        }
 
-        text = `${question}</question>`;
-
-	    let xml = jsontoxml([{
-	    	 name: 'questionSet',
-	    	 text: text
-	    }]);
+        text = `${question}
+               </question>`;
+        
+        let xml = `<questionSet>
+                     ${text}
+                  </questionSet>`
+	    // let xml = jsontoxml([{
+	    // 	 name: 'questionSet',
+	    // 	 text: text
+	    // }]);
 	    
 	    res.send(xml.toString());
 	    //console.log(`<?xml version="1.0" encoding="UTF-8"?>${xml}`)
