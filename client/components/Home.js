@@ -3,7 +3,8 @@ import axios from 'axios'
 
 class Home extends Component{
 	  state = {
-           QType: "SB"
+           QType: "SB",
+           tableList : []
 	       // TF: "TF",
 	       // CA: "CA",
 	       // ES: "ES",
@@ -71,72 +72,74 @@ class Home extends Component{
       }
 
       addTable = (e)=>{
-      	 //  e.preventDefault();
       	   let row = parseInt(document.getElementById("table_row").value),
       	       col = parseInt(document.getElementById("table_col").value);
-
-            console.log(document.getElementById("table_row"))
-
                this.tableDataList(row, col);
-      //      let prev = document.getElementsByName(this.state.eleId)[0];
- 
-      //      let data = `<![CDATA[<p></p><table><thead>
-						// <tr class="header">
-						// <th><em>Sept 2</em></th>
-						// <th><em>Sept 6</em></th>
-						// <th><em>Sept 10</em></th>
-						// </tr>
-						// </thead>
-						// <tbody>
-						// <tr class="odd">
-						// <td>1,000</td>
-						// <td>4,000</td>
-						// <td>200</td>
-						// </tr>
-					 //   </tbody></table>]]>`;
-      //      prev.value = data;
+      }
+      generateTableToEle = ()=>{
+      	let row = this.state.row, col = this.state.col;
+
+      	let table1 = "<![CDATA[<p>"+document.getElementsByName(this.state.eleId)[0].value+"</p>"+
+                     "<table><thead><tr class='header'>";
+        let tableHeadings = document.getElementsByClassName('tblhead'),
+            tableValues = document.getElementsByClassName('tblvalue');
+        for(let x of tableHeadings){
+            table1 += "<th><em>"+x.value+"</em></th>";
+        }
+        table1 += "</tr></thead><tbody><tr class='odd'>";
+        let count = 1;
+        for(let y of tableValues){
+        	if(count%col==0){
+        		table1 += "</tr><tr class='odd'>";
+        	}
+        	table1 += "<td>"+y.value+"</td>";
+        	++count;
+        }
+        table1 += "</tr></tbody></table>]]>";
+        console.log(this.state)
+        document.getElementsByName(this.state.eleId)[0].value = table1;
+        document.getElementById('popup_close').click();
       }
 
-      tableDataList = (row, col)=>{
+      tableDataList = async (row, col)=>{
+      	  await this.setState({row, col});
       	  let a = [];
-      	  let d = row*col;
-      	  let k = row;
+      	  let d = col;
+      	  let k = row*col;
           let i = 1;
       	  let h = d;
-
       	  while(i<=h){
-      	  	 a.push(<input className={"input-table margin-ryt-10 tblhead_"+i} type="text" key={i} name="ques_topic" placeholder={'Heading'+i} />);
+      	  	 a.push(<input className={"input-table margin-ryt-10 tblhead"} type="text" key={i} name="ques_topic" placeholder={'Heading'+i} />);
              ++i;
       	  }
       	  a.push(<p className="margin-botm-15"></p>);
       	  i = 1;
       	  while(i<=k){
       	  	  if(i%d==0){
-                 a.push(<input className="input-table margin-ryt-10" type="text" key={i+'_'} name="ques_topic" placeholder="Enter question topic" />);
+                 a.push(<input className={"input-table margin-ryt-10 tblvalue"} type="text" key={i+'_'} name="ques_topic" placeholder="Enter value" />);
                  a.push(<p className="margin-botm-15"></p>);
       	  	  }else{
-      	  	  	 a.push(<input className="input-table margin-ryt-10" type="text" key={i+'_'} name="ques_topic" placeholder="Enter question topic" />);
+      	  	  	 a.push(<input className={"input-table margin-ryt-10 tblvalue"} type="text" key={i+'_'} name="ques_topic" placeholder="Enter value" />);
       	  	  }
       	  	  ++i;
       	  }
-      	  return a;
+      	  await this.setState({tableList: a})
       }   
 
       render(){
       	 return(
            <Fragment>
-
-
               <div id="popup1" className="overlay">
 				<div className="popup">
-					<a className="close" href="#">&times;</a>
+					<a className="close" href="#" id="popup_close">&times;</a>
 					<div className="content">
-						 {this.tableDataList() && this.tableDataList().map(x=>x)}
+						 {this.state.tableList.length>0 && this.state.tableList.map(x=>x)}
 					</div> 
 					<footer className="txt-right">
 					      <input className="input-table margin-ryt-10" type="text" id="table_row" placeholder="No of rows"/>
 					      <input className="input-table margin-ryt-10" type="text" id="table_col" placeholder="No of cols"/>
-					      <button className="btn-default margin-top-20" onClick={this.addTable}>Generate</button>
+					      <button className="btn-default margin-top-20 margin-ryt-10" onClick={this.addTable}>Create table</button>
+					      <button className="btn-default margin-top-20" onClick={this.generateTableToEle}>Generate</button>
 					</footer>
 				</div>
 			</div>

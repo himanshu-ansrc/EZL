@@ -428,7 +428,7 @@
 
 	.input-table{
        font-family: 'Roboto';
-       padding: 10px;
+       padding: 10px 4px;
        border: 1px solid #ccc5c5;
 	}
 
@@ -441,8 +441,6 @@
 		padding-bottom: 10px;
 	}
     /*END*/	
-
-
 
 /*POPUP*/
 .overlay {
@@ -489,7 +487,7 @@
   color: #06D85F;
 }
 .popup .content {
-  max-height: 70%;
+  max-height: 300px;
   overflow: auto;
 }
 
