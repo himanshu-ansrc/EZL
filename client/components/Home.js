@@ -16,6 +16,39 @@ class Home extends Component{
 	       // YN: "YN",
 	       // MC: "MC"
 	  }
+    componentDidMount(){
+            // const menu = document.querySelector(".menu");
+            // let menuVisible = false;
+            // const toggleMenu = command => {
+            //   menu.style.display = command === "show" ? "block" : "none";
+            //   menuVisible = !menuVisible;
+            // };
+            // const setPosition = ({ top, left }) => {
+            //   menu.style.left = `${left}px`;
+            //   menu.style.top = `${top}px`;
+            //   toggleMenu("show");
+            // };
+            // window.addEventListener("click", e => {
+            //   let visible = "hide"
+            //   if(e.target.classList.contains('uplaod-any')){
+            //       visible = "show"
+            //   }
+            //   if(menuVisible)toggleMenu(visible);
+            // });
+
+            // window.addEventListener("contextmenu", e => {
+            //   e.preventDefault();
+            //   const origin = {
+            //     left: e.pageX,
+            //     top: e.pageY
+            //   };
+            //   setPosition(origin);
+            //   return false;
+            // });
+            // window.onclick = function(e){
+            //     console.log(e.target);
+            // }
+    }
 	  handleChange = (e)=>{
 	  	 this.setState({ QType: e.target.value })
 	  }
@@ -64,20 +97,44 @@ class Home extends Component{
       }
       CA = ()=>{
             return (
-			 <tr className="margin-top-5">
-			    <td><label>Question3</label></td>
-			    <td><textarea className="input-box" name="ques_txt" rows="5" cols="30"></textarea></td> 
-			  </tr>
+        			  <tr className="margin-top-5">
+        			    <td><label>Question3</label></td>
+        			    <td><textarea className="input-box" name="ques_txt" rows="5" cols="30"></textarea></td> 
+        			  </tr>
             )
       }
 
       addTable = (e)=>{
+      	   let table_input = document.getElementById('table_input').value;
+      	   console.log(table_input.split("\n"));
       	   let row = parseInt(document.getElementById("table_row").value),
       	       col = parseInt(document.getElementById("table_col").value);
-               this.tableDataList(row, col);
+      	   if(table_input.value!==''){
+              row = table_input.split("\n").length-2;
+              col = table_input.split("\n")[0].split("\t").length;
+      	   }else{
+      	   	  table_input = null;
+      	   }
+      	   this.tableDataList(row, col, table_input);
       }
-      generateTableToEle = ()=>{
-      	let row = this.state.row, col = this.state.col;
+      generateTableToEle = async ()=>{
+           let table_input = document.getElementById('table_input').value;
+           // console.log(table_input.split("\n"));
+           // let row = parseInt(document.getElementById("table_row").value),
+           //     col = parseInt(document.getElementById("table_col").value);
+           let row = null, col = null;
+           if(table_input.value!==''){
+              row = table_input.split("\n").length-2;
+              col = table_input.split("\n")[0].split("\t").length;
+           }else{
+              table_input = null;
+           }
+           await this.tableDataList(row, col, table_input);
+ 
+      	  // let row = this.state.row, col = this.state.col;
+
+          //console.log(row);
+          //console.log(col);
 
       	let table1 = "<![CDATA[<p>"+document.getElementsByName(this.state.eleId)[0].value+"</p>"+
                      "<table><thead><tr class='header'>";
@@ -101,48 +158,70 @@ class Home extends Component{
         document.getElementById('popup_close').click();
       }
 
-      tableDataList = async (row, col)=>{
-      	  await this.setState({row, col});
+      tableDataList = async (row, col, tableInput)=>{
+      	 // await this.setState({row, col});
       	  let a = [];
       	  let d = col;
       	  let k = row*col;
           let i = 1;
       	  let h = d;
+          
+          let tableHeader = '';
+      	  if(tableInput){
+             tableHeader = tableInput.split("\n")[0].split("\t");
+      	  }
       	  while(i<=h){
-      	  	 a.push(<input className={"input-table margin-ryt-10 tblhead"} type="text" key={i} name="ques_topic" placeholder={'Heading'+i} />);
+      	  	 a.push(<input className={"input-table margin-ryt-10 tblhead"} type="text" value={tableHeader[i-1]} key={i} name="ques_topic" placeholder={'Heading'+i} />);
              ++i;
       	  }
       	  a.push(<p className="margin-botm-15"></p>);
       	  i = 1;
+      	  let tableRow = 1;
+      	  let tableCol = 0;
+      	  console.log(k)
       	  while(i<=k){
+      	  	  //console.log(tableInput.split("\n"));
+      	  	  let data = (tableInput.split("\n")[tableRow]).split("\t")[tableCol];
+      	  	  console.log(tableRow)
       	  	  if(i%d==0){
-                 a.push(<input className={"input-table margin-ryt-10 tblvalue"} type="text" key={i+'_'} name="ques_topic" placeholder="Enter value" />);
+                 a.push(<input className={"input-table margin-ryt-10 tblvalue"} value={data} type="text" key={i+'_'} name="ques_topic" placeholder="Enter value" />);
                  a.push(<p className="margin-botm-15"></p>);
+                 ++tableRow;
+                 tableCol = -1;
       	  	  }else{
-      	  	  	 a.push(<input className={"input-table margin-ryt-10 tblvalue"} type="text" key={i+'_'} name="ques_topic" placeholder="Enter value" />);
+      	  	  	 a.push(<input className={"input-table margin-ryt-10 tblvalue"} value={data} type="text" key={i+'_'} name="ques_topic" placeholder="Enter value" />);
       	  	  }
       	  	  ++i;
+      	  	  ++tableCol;
       	  }
       	  await this.setState({tableList: a})
       }   
-
+      addImage = (e)=>{
+         let files = e.target.files[0];
+         let reader = new FileReader();
+             reader.addEventListener("load", function () {
+                  console.log(reader.result);
+             }, false);
+             reader.readAsDataURL(files);
+      }
       render(){
       	 return(
            <Fragment>
               <div id="popup1" className="overlay">
-				<div className="popup">
-					<a className="close" href="#" id="popup_close">&times;</a>
-					<div className="content">
-						 {this.state.tableList.length>0 && this.state.tableList.map(x=>x)}
-					</div> 
-					<footer className="txt-right">
-					      <input className="input-table margin-ryt-10" type="text" id="table_row" placeholder="No of rows"/>
-					      <input className="input-table margin-ryt-10" type="text" id="table_col" placeholder="No of cols"/>
-					      <button className="btn-default margin-top-20 margin-ryt-10" onClick={this.addTable}>Create table</button>
-					      <button className="btn-default margin-top-20" onClick={this.generateTableToEle}>Generate</button>
-					</footer>
-				</div>
-			</div>
+        				<div className="popup">
+        					<a className="close" href="#" id="popup_close">&times;</a>
+        					<div className="content">
+        						 {this.state.tableList.length>0 && this.state.tableList.map(x=>x)}
+        						 <textarea id="table_input" className="table-input" rows="10" cols="20" placeholder="Copy and Paste from csv"></textarea>
+        					</div> 
+        					<footer className="txt-right">
+        					      <input className="input-table margin-ryt-10 hide" type="text" id="table_row" placeholder="No of rows"/>
+        					      <input className="input-table margin-ryt-10 hide" type="text" id="table_col" placeholder="No of cols"/>
+        					      <button className="btn-default margin-top-20 hide margin-ryt-10" onClick={this.addTable}>Create table</button>
+        					      <button className="btn-default margin-top-20" onClick={this.generateTableToEle}>Generate</button>
+        					</footer>
+        				</div>
+			        </div>
 
 	           <main className="main-content-box">
 	        	 <div className="flex main-content-wrapper">
@@ -181,26 +260,38 @@ class Home extends Component{
 											    <td><label>Topic</label></td>
 											    <td><input className="input-box" type="text" name="ques_topic" placeholder="Enter question topic"/></td> 
 											  </tr>
+                          {this.state.QType=='SB' && this.SB()}
+                          {this.state.QType=='TF' && this.TF()}
+                          {this.state.QType=='CA' && this.CA()}
 
-                                              {this.state.QType=='SB' && this.SB()}
-                                              {this.state.QType=='TF' && this.TF()}
-                                              {this.state.QType=='CA' && this.CA()}
+                          <tr className="margin-top-5">
+                            <td></td>
+                            <td><input type="file" onChange={this.addImage}/></td> 
+                          </tr>
 
 										  	  <tr className="margin-top-5">
 										        <td></td>
-											    <td><button  className="btn-default margin-top-20">Generate</button></td> 
-											  </tr>
+											      <td><button  className="btn-default margin-top-20">Generate</button></td> 
+											    </tr>
 										   </tbody>
 										</table>									
 									</form>
 			        	 	  </div>
-	                          <div>
-	                          	<textarea id="show_xml" rows="30" cols="70" placeholder="Output as XML"></textarea>
-	                          </div>
-			        	 	  
+                    <div>
+                    	<textarea id="show_xml" rows="30" cols="70" placeholder="Output as XML"></textarea>
+                    </div>
 		        	 </div>
 		        </div>
 	           </main>
+        
+             {/*<div className="uplaod-any">
+               <div className="menu">
+                  <ul className="menu-options">
+                    <li className="menu-option"><input type="file"/></li>
+                  </ul>
+               </div>
+             </div>
+            */}
            </Fragment>
       	 )
       }
