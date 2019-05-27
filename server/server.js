@@ -290,6 +290,66 @@ function CA(question){
 }
 
 
+// function imageData(imgData){
+// 	let {imgName, imgSize, imgMime, imgBase64} = 
+// 	return `<media_set>
+//               <internal_media>
+//                   <name>${imgName}</name>
+// 		          <mediaData>
+// 		           <size>${imgSize}</size>
+// 		           <mime_type>${imgMime}</mime_type>
+// 		           <creation>1544473323754</creation>
+// 		           <modified>1544473323754</modified>
+// 		           <height>0</height>
+// 		           <width>0</width>
+// 		           <data>${imgBase64}</data>
+// 		          </mediaData>
+//                </internal_media>
+//             </media_set>`;
+// }
+
+app.post('/image-data', (req, res)=>{
+    let {imgName, imgSize, imgMime, imgBase64} = req.body;
+    imgBase64 = imgBase64.split(',')[1];
+	res.send({
+		data: `<media_set>
+          <internal_media>
+              <name>${imgName}</name>
+	          <mediaData>
+	           <size>${imgSize}</size>
+	           <mime_type>${imgMime}</mime_type>
+	           <creation>1544473323754</creation>
+	           <modified>1544473323754</modified>
+	           <height>0</height>
+	           <width>0</width>
+	           <data>${imgBase64}</data>
+	          </mediaData>
+           </internal_media>
+        </media_set>`
+	}) ;
+})
+
+
+app.post('/random-variables', (req,res)=>{
+	 const randomList = req.body.random_info.split('#');
+	 let allVariables = null;
+	 for(let x of randomList){
+         let varible = x.split('\n');
+         let listData = null;
+
+         for(let y=1; y<varible.length-1; y++){
+         	 listData += `<row><![CDATA[${varible[x]}]]></row>`;
+         }
+         let data = `<pooledRandom>
+                      <name>${(varible[0]).trim()}</name>
+                      <arrayed>true</arrayed>
+                      <rows>${listData}</rows>
+                     </pooledRandom>`;
+         allVariables += data;
+	 }
+      res.send(`<randomVariables>${allVariables}</randomVariables>`);
+})
+
 app.post('/', (req, res)=>{
 	    let text = null;
         let question =   `<question>

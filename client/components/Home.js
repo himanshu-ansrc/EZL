@@ -1,6 +1,9 @@
 import React, {Component, Fragment} from 'react';
 import axios from 'axios'
 
+import Test from './Test';
+
+
 class Home extends Component{
 	  state = {
            QType: "SB",
@@ -17,6 +20,7 @@ class Home extends Component{
 	       // MC: "MC"
 	  }
     componentDidMount(){
+           console.log(Test);
             // const menu = document.querySelector(".menu");
             // let menuVisible = false;
             // const toggleMenu = command => {
@@ -64,46 +68,44 @@ class Home extends Component{
          const {data} = await axios.post('/', obj);
          document.getElementById('show_xml').value = data;
 	  }
-      SB = ()=>{
-            return (
-			 <tr className="margin-top-5">
-			    <td><label>Question</label></td>
-			    <td className="flex-base"><textarea className="input-box" name="ques_txt" rows="5" cols="30"></textarea><a href="#popup1" className="btn-default"  onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a></td> 
-			  </tr>
-            )
-      }
-
-      TF = ()=>{
+    SB = ()=>{
+          return (
+        		   <tr className="margin-top-5">
+        		     <td><label>Question</label></td>
+        		     <td className="flex-base"><textarea className="input-box" name="ques_txt" rows="5" cols="30"></textarea><a href="#popup1" className="btn-default"  onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a></td> 
+        		   </tr>
+          )
+    }
+    TF = ()=>{
             return (
                <Fragment>
 	              <tr className="margin-top-5">
-				    <td><label>Question</label></td>
-			         <td className="flex-base"><textarea className="input-box" name="ques_txt" rows="5" cols="30"></textarea><a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a></td> 
-				  </tr>
-				  <tr className="margin-top-5">
-				    <td><label>Common feed</label></td>
-				    <td className="flex-base"><textarea className="input-box" name="tf_ques_feed" rows="2" cols="10"></textarea><a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a></td> 
-				  </tr>
-				  <tr className="margin-top-5">
-				    <td><label>TrueInfo feed</label></td>
-				    <td className="flex-base"><textarea className="input-box" name="tf_true_feed" rows="2" cols="10"></textarea><a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a></td> 
-				  </tr>
-				  <tr className="margin-top-5">
-				    <td><label>FalseInfo feed</label></td>
-				    <td className="flex-base"><textarea className="input-box" name="tf_false_feed" rows="2" cols="10"></textarea><a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a></td> 
-				  </tr>
+      				       <td><label>Question</label></td>
+      			         <td className="flex-base"><textarea className="input-box" name="ques_txt" rows="5" cols="30"></textarea><a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a></td> 
+      				  </tr>
+      				  <tr className="margin-top-5">
+      				    <td><label>Common feed</label></td>
+      				    <td className="flex-base"><textarea className="input-box" name="tf_ques_feed" rows="2" cols="10"></textarea><a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a></td> 
+      				  </tr>
+      				  <tr className="margin-top-5">
+      				    <td><label>TrueInfo feed</label></td>
+      				    <td className="flex-base"><textarea className="input-box" name="tf_true_feed" rows="2" cols="10"></textarea><a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a></td> 
+      				  </tr>
+      				  <tr className="margin-top-5">
+      				    <td><label>FalseInfo feed</label></td>
+      				    <td className="flex-base"><textarea className="input-box" name="tf_false_feed" rows="2" cols="10"></textarea><a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a></td> 
+      				  </tr>
                </Fragment>
             )
       }
       CA = ()=>{
             return (
-        			  <tr className="margin-top-5">
-        			    <td><label>Question3</label></td>
-        			    <td><textarea className="input-box" name="ques_txt" rows="5" cols="30"></textarea></td> 
-        			  </tr>
+        			 <tr className="margin-top-5">
+        			   <td><label>Question3</label></td>
+        			   <td><textarea className="input-box" name="ques_txt" rows="5" cols="30"></textarea></td> 
+        			 </tr>
             )
       }
-
       addTable = (e)=>{
       	   let table_input = document.getElementById('table_input').value;
       	   console.log(table_input.split("\n"));
@@ -157,7 +159,6 @@ class Home extends Component{
         document.getElementsByName(this.state.eleId)[0].value = table1;
         document.getElementById('popup_close').click();
       }
-
       tableDataList = async (row, col, tableInput)=>{
       	 // await this.setState({row, col});
       	  let a = [];
@@ -178,7 +179,6 @@ class Home extends Component{
       	  i = 1;
       	  let tableRow = 1;
       	  let tableCol = 0;
-      	  console.log(k)
       	  while(i<=k){
       	  	  //console.log(tableInput.split("\n"));
       	  	  let data = (tableInput.split("\n")[tableRow]).split("\t")[tableCol];
@@ -199,10 +199,18 @@ class Home extends Component{
       addImage = (e)=>{
          let files = e.target.files[0];
          let reader = new FileReader();
-             reader.addEventListener("load", function () {
-                  console.log(reader.result);
+             reader.addEventListener("load", async function () {
+                  let {name: imgName, size: imgSize, type: imgMime} = files,
+                      imgBase64 = reader.result
+                  let {data} = await axios.post('/image-data', {imgName, imgSize, imgMime, imgBase64});
+                       document.getElementsByName('image_data')[0].value = data.data;
              }, false);
-             reader.readAsDataURL(files);
+         reader.readAsDataURL(files);
+      }
+      addRandomVariables = async ()=>{
+        let input = document.getElementById('random_input');
+        let {data} = await axios.post('/random-variables', {random_info: input.value});
+        console.log(data);
       }
       render(){
       	 return(
@@ -222,6 +230,19 @@ class Home extends Component{
         					</footer>
         				</div>
 			        </div>
+
+              <div id="random_variables_popup" className="overlay">
+                <div className="popup">
+                  <a className="close" href="#" id="popup_close">&times;</a>
+                  <div className="content">
+                     <textarea id="random_input" className="table-input" rows="10" cols="20" placeholder="Copy and Paste from csv"></textarea>
+                  </div> 
+                  <footer className="txt-right">
+                        <button className="btn-default margin-top-20 margin-ryt-10" onClick={this.addRandomVariables}>Create Variables</button>
+                  </footer>
+                </div>
+              </div>
+
 
 	           <main className="main-content-box">
 	        	 <div className="flex main-content-wrapper">
@@ -260,13 +281,25 @@ class Home extends Component{
 											    <td><label>Topic</label></td>
 											    <td><input className="input-box" type="text" name="ques_topic" placeholder="Enter question topic"/></td> 
 											  </tr>
+
                           {this.state.QType=='SB' && this.SB()}
                           {this.state.QType=='TF' && this.TF()}
                           {this.state.QType=='CA' && this.CA()}
 
                           <tr className="margin-top-5">
                             <td></td>
+                            <td><a href="#random_variables_popup" className="btn-default margin-top-20">Add Random variable</a></td> 
+                          </tr>
+
+
+                          <tr className="margin-top-5">
+                            <td></td>
                             <td><input type="file" onChange={this.addImage}/></td> 
+                          </tr>
+                        
+                          <tr className="margin-top-5">
+                            <td></td>
+                            <td><textarea className="input-box" name="image_data" rows="5" cols="30"></textarea></td> 
                           </tr>
 
 										  	  <tr className="margin-top-5">
