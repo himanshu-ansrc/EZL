@@ -210,6 +210,7 @@ class Home extends Component{
       addRandomVariables = async ()=>{
         let input = document.getElementById('random_input');
         let {data} = await axios.post('/random-variables', {random_info: input.value});
+        document.getElementById('random_input').value = data;
         console.log(data);
       }
       render(){

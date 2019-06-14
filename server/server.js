@@ -139,9 +139,7 @@ function problemTemplate(references){
 	 	}
 	 }
      let text = `<p>${references.ques_txt}</p>`;
-     
-
-
+ 
 
      if(references.ques_type==="fib"){
 	    let ques_txt = (references.ques_txt).replace('___', '<fib type="int" name="AA"/>');
@@ -332,13 +330,20 @@ app.post('/image-data', (req, res)=>{
 
 app.post('/random-variables', (req,res)=>{
 	 const randomList = req.body.random_info.split('#');
-	 let allVariables = null;
+	 let allVariables = '';
 	 for(let x of randomList){
-         let varible = x.split('\n');
-         let listData = null;
 
-         for(let y=1; y<varible.length-1; y++){
-         	 listData += `<row><![CDATA[${varible[x]}]]></row>`;
+         let varible = x.split('\n');
+         console.log(varible);
+         let listData = '';
+         
+         varible = varible.filter(function (el) {
+		  return el != '';
+		 });
+
+		 console.log(varible)
+         for(let y=1; y<varible.length; y++){
+         	 listData += `<row><![CDATA[${varible[y]}]]></row>`;
          }
          let data = `<pooledRandom>
                       <name>${(varible[0]).trim()}</name>
@@ -347,7 +352,7 @@ app.post('/random-variables', (req,res)=>{
                      </pooledRandom>`;
          allVariables += data;
 	 }
-      res.send(`<randomVariables>${allVariables}</randomVariables>`);
+     res.send(`<randomVariables>${allVariables}</randomVariables>`);
 })
 
 app.post('/', (req, res)=>{
@@ -385,7 +390,6 @@ app.post('/', (req, res)=>{
 	    // 	 name: 'questionSet',
 	    // 	 text: text
 	    // }]);
-	    
 	    res.send(xml.toString());
 	    //console.log(`<?xml version="1.0" encoding="UTF-8"?>${xml}`)
 	    // const wrksheetName = (req.body.work_tmp_name).trim();
