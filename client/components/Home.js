@@ -1,8 +1,7 @@
 import React, {Component, Fragment} from 'react';
 import axios from 'axios'
-
 import Test from './Test';
-
+import ReactDND from './ReactDND'
 
 class Home extends Component{
 	  state = {
@@ -72,7 +71,7 @@ class Home extends Component{
           return (
         		   <tr className="margin-top-5">
         		     <td><label>Question</label></td>
-        		     <td className="flex-base"><textarea className="input-box" name="ques_txt" rows="5" cols="30"></textarea><a href="#popup1" className="btn-default"  onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a></td> 
+        		     <td className="flex-base"><textarea className="input-box" name="ques_txt" rows="5" cols="30"></textarea>{/*<a href="#popup1" className="btn-default"  onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a>*/}</td> 
         		   </tr>
           )
     }
@@ -81,19 +80,19 @@ class Home extends Component{
                <Fragment>
 	              <tr className="margin-top-5">
       				       <td><label>Question</label></td>
-      			         <td className="flex-base"><textarea className="input-box" name="ques_txt" rows="5" cols="30"></textarea><a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a></td> 
+      			         <td className="flex-base"><textarea className="input-box" name="ques_txt" rows="5" cols="30"></textarea>{/*<a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a>*/}</td> 
       				  </tr>
       				  <tr className="margin-top-5">
       				    <td><label>Common feed</label></td>
-      				    <td className="flex-base"><textarea className="input-box" name="tf_ques_feed" rows="2" cols="10"></textarea><a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a></td> 
+      				    <td className="flex-base"><textarea className="input-box" name="tf_ques_feed" rows="2" cols="10"></textarea>{/*<a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a>*/}</td> 
       				  </tr>
       				  <tr className="margin-top-5">
       				    <td><label>TrueInfo feed</label></td>
-      				    <td className="flex-base"><textarea className="input-box" name="tf_true_feed" rows="2" cols="10"></textarea><a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a></td> 
+      				    <td className="flex-base"><textarea className="input-box" name="tf_true_feed" rows="2" cols="10"></textarea>{/*<a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a>*/}</td> 
       				  </tr>
       				  <tr className="margin-top-5">
       				    <td><label>FalseInfo feed</label></td>
-      				    <td className="flex-base"><textarea className="input-box" name="tf_false_feed" rows="2" cols="10"></textarea><a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a></td> 
+      				    <td className="flex-base"><textarea className="input-box" name="tf_false_feed" rows="2" cols="10"></textarea>{/*<a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a>*/}</td> 
       				  </tr>
                </Fragment>
             )
@@ -138,8 +137,10 @@ class Home extends Component{
           //console.log(row);
           //console.log(col);
 
-      	let table1 = "<![CDATA[<p>"+document.getElementsByName(this.state.eleId)[0].value+"</p>"+
-                     "<table><thead><tr class='header'>";
+      	// let table1 = "<![CDATA[<p>"+document.getElementsByName(this.state.eleId)[0].value+"</p>"+
+       //               "<table><thead><tr class='header'>";
+
+        let table1 = "<table><thead><tr class='header'>";
         let tableHeadings = document.getElementsByClassName('tblhead'),
             tableValues = document.getElementsByClassName('tblvalue');
         for(let x of tableHeadings){
@@ -154,9 +155,11 @@ class Home extends Component{
         	table1 += "<td>"+y.value+"</td>";
         	++count;
         }
-        table1 += "</tr></tbody></table>]]>";
-        console.log(this.state)
+        //table1 += "</tr></tbody></table>]]>";
+        table1 += "</tr></tbody></table>";
+        console.log(this.state);
         document.getElementsByName(this.state.eleId)[0].value = table1;
+        document.getElementById('show_xml').value = vkbeautify.xml(table1);
         document.getElementById('popup_close').click();
       }
       tableDataList = async (row, col, tableInput)=>{
@@ -204,6 +207,7 @@ class Home extends Component{
                       imgBase64 = reader.result
                   let {data} = await axios.post('/image-data', {imgName, imgSize, imgMime, imgBase64});
                        document.getElementsByName('image_data')[0].value = data.data;
+                       document.getElementById('show_xml').value = vkbeautify.xml(data.data);
              }, false);
          reader.readAsDataURL(files);
       }
@@ -211,7 +215,12 @@ class Home extends Component{
         let input = document.getElementById('random_input');
         let {data} = await axios.post('/random-variables', {random_info: input.value});
         document.getElementById('random_input').value = data;
+        document.getElementById('show_xml').value = vkbeautify.xml(data);
+        document.getElementById('popup_close').click();
         console.log(data);
+      }
+      toogleForm = ()=>{
+          document.getElementById('main_form').classList.toggle('display-none');
       }
       render(){
       	 return(
@@ -248,14 +257,46 @@ class Home extends Component{
 	           <main className="main-content-box">
 	        	 <div className="flex main-content-wrapper">
 		        	 <div className="flex space-bw main-content">
-		        	          <div className="ques-table">
-									<form method="post" onSubmit={this.dataSubmit} id="main_form">
+		        	   <div className="ques-table">
+                    <table className="prob-table">
+                      <tbody>
+                         <tr className="margin-top-5">
+                           <td><label>Generate table</label></td>
+                           <td><a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a></td> 
+                         </tr>
+                      </tbody>
+                    </table>
+                    <table className="prob-table">
+                      <tbody>
+                         <tr className="margin-top-5">
+                           <td><label>Random variable</label></td>
+                           <td><a href="#random_variables_popup" className="btn-default margin-top-20">Generate</a></td> 
+                         </tr>
+                      </tbody>
+                    </table>
+                    <table className="prob-table">
+                      <tbody>
+                         <tr className="margin-top-5">
+                           <td><label>Add image</label></td>
+                           <td><input type="file" onChange={this.addImage}/></td> 
+                         </tr>
+                      </tbody>
+                    </table>
+                    <table className="prob-table">
+                      <tbody>
+                         <tr className="margin-top-5">
+                           <td><label>Open form</label></td>
+                           <td><input type="checkbox" onClick={this.toogleForm}/></td> 
+                         </tr>
+                      </tbody>
+                    </table>
+									<form method="post" onSubmit={this.dataSubmit} className="display-none" id="main_form">
 										<table className="prob-table">
 										   <tbody>
 										      <tr className="margin-top-5">
-											    <td><label>ID</label></td>
-											    <td><input className="input-box" type="text" name="ques_id" placeholder="Enter ID"/></td> 
-											  </tr>
+											     <td><label>ID</label></td>
+											     <td><input className="input-box" type="text" name="ques_id" placeholder="Enter ID"/></td> 
+											    </tr>
 										      <tr className="margin-top-5">
 											    <td><label>Type</label></td>
 											    <td>
@@ -282,21 +323,20 @@ class Home extends Component{
 											    <td><label>Topic</label></td>
 											    <td><input className="input-box" type="text" name="ques_topic" placeholder="Enter question topic"/></td> 
 											  </tr>
-
                           {this.state.QType=='SB' && this.SB()}
                           {this.state.QType=='TF' && this.TF()}
                           {this.state.QType=='CA' && this.CA()}
-
-                          <tr className="margin-top-5">
+                          {/*
+                           <tr className="margin-top-5">
                             <td></td>
                             <td><a href="#random_variables_popup" className="btn-default margin-top-20">Add Random variable</a></td> 
                           </tr>
-
-
-                          <tr className="margin-top-5">
-                            <td></td>
-                            <td><input type="file" onChange={this.addImage}/></td> 
-                          </tr>
+                        
+                            <tr className="margin-top-5">
+                              <td></td>
+                              <td><input type="file" onChange={this.addImage}/></td> 
+                            </tr>
+                          */}
                         
                           <tr className="margin-top-5">
                             <td></td>
@@ -312,7 +352,10 @@ class Home extends Component{
 									</form>
 			        	 	  </div>
                     <div>
-                    	<textarea id="show_xml" rows="30" cols="70" placeholder="Output as XML"></textarea>
+                    	<textarea id="show_xml" rows="30" cols="50" placeholder="Output as XML"></textarea>
+                    </div>
+                    <div>
+                      <ReactDND/>
                     </div>
 		        	 </div>
 		        </div>

@@ -210,7 +210,8 @@
     /*END UPLOAD CONTAINER*/
     .ques-table{
        height: 500px;
-       padding-right: 140px;
+       width: 400px;
+       padding-right: 50px;
        overflow-y: scroll;
     }
 
