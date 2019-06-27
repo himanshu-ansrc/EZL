@@ -262,6 +262,9 @@
 	 .margin-ryt-5{
 	 	margin-right: 5px;
 	 }
+	 .margin-lft-20{
+	 	margin-left: 20px;
+	 }
 	 .margin-botm-10{
 	 	 margin-bottom: 10px;
 	 }
@@ -352,6 +355,12 @@
 	 }
 	 .display-none{
 	 	 display: none;
+	 }
+	 .display-block{
+	 	 display: block;
+	 }
+	 .display-inline{
+	 	 display: inline;
 	 }
 	 .txt-center{
 	 	text-align: center;
@@ -564,3 +573,8 @@
 
 
 /*END UPLOAD IMAGE*/
+
+.list-group-item{
+	 display: block;
+	 height: 50px;
+}

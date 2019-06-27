@@ -6,51 +6,11 @@ import ReactDND from './ReactDND'
 class Home extends Component{
 	  state = {
            QType: "SB",
-           tableList : []
-	       // TF: "TF",
-	       // CA: "CA",
-	       // ES: "ES",
-	       // FB: "FB",
-	       // MA: "MA",
-	       // NU: "NU",
-	       // RA: "RA",
-	       // SA: "SA",
-	       // YN: "YN",
-	       // MC: "MC"
+           tableList : [],
+           xmlList : [],
 	  }
     componentDidMount(){
-           console.log(Test);
-            // const menu = document.querySelector(".menu");
-            // let menuVisible = false;
-            // const toggleMenu = command => {
-            //   menu.style.display = command === "show" ? "block" : "none";
-            //   menuVisible = !menuVisible;
-            // };
-            // const setPosition = ({ top, left }) => {
-            //   menu.style.left = `${left}px`;
-            //   menu.style.top = `${top}px`;
-            //   toggleMenu("show");
-            // };
-            // window.addEventListener("click", e => {
-            //   let visible = "hide"
-            //   if(e.target.classList.contains('uplaod-any')){
-            //       visible = "show"
-            //   }
-            //   if(menuVisible)toggleMenu(visible);
-            // });
-
-            // window.addEventListener("contextmenu", e => {
-            //   e.preventDefault();
-            //   const origin = {
-            //     left: e.pageX,
-            //     top: e.pageY
-            //   };
-            //   setPosition(origin);
-            //   return false;
-            // });
-            // window.onclick = function(e){
-            //     console.log(e.target);
-            // }
+         
     }
 	  handleChange = (e)=>{
 	  	 this.setState({ QType: e.target.value })
@@ -161,6 +121,7 @@ class Home extends Component{
         document.getElementsByName(this.state.eleId)[0].value = table1;
         document.getElementById('show_xml').value = vkbeautify.xml(table1);
         document.getElementById('popup_close').click();
+        this.addXmlButton("table");
       }
       tableDataList = async (row, col, tableInput)=>{
       	 // await this.setState({row, col});
@@ -210,6 +171,7 @@ class Home extends Component{
                        document.getElementById('show_xml').value = vkbeautify.xml(data.data);
              }, false);
          reader.readAsDataURL(files);
+         this.addXmlButton("image");
       }
       addRandomVariables = async ()=>{
         let input = document.getElementById('random_input');
@@ -217,10 +179,22 @@ class Home extends Component{
         document.getElementById('random_input').value = data;
         document.getElementById('show_xml').value = vkbeautify.xml(data);
         document.getElementById('popup_close').click();
-        console.log(data);
+        this.addXmlButton("randomvariable");
       }
       toogleForm = ()=>{
           document.getElementById('main_form').classList.toggle('display-none');
+      }
+
+      addXmlButton(eletype){
+          let a = this.state.xmlList;
+              a.push(eletype);
+          this.setState({xmlList : a});
+      }
+      removeXmlElement = (e)=>{
+           let {id} = e.target.dataset;
+           let a = this.state.xmlList.filter((x)=>x!==id);
+           console.log(a);
+           this.setState({xmlList: a});
       }
       render(){
       	 return(
@@ -355,7 +329,16 @@ class Home extends Component{
                     	<textarea id="show_xml" rows="30" cols="50" placeholder="Output as XML"></textarea>
                     </div>
                     <div>
-                      <ReactDND/>
+                            <div id="example1" className="list-group col">
+                              {this.state.xmlList.length>0 && this.state.xmlList.map((res)=>{
+                                  return (<div className="display-block">
+                                              <div className="list-group-item">
+                                                   <a className="btn-default display-inline margin-top-20" id={res}>{res}</a>
+                                                   <a onClick={this.removeXmlElement} className="margin-lft-20 pointer" data-id={res}>X</a>
+                                              </div>
+                                          </div> );
+                              })}
+                            </div>
                     </div>
 		        	 </div>
 		        </div>

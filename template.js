@@ -11,6 +11,13 @@ export default () => {
         <body>
           <div id="root"></div>
           <script type="text/javascript" src="/dist/bundle.js"></script>
+          <script type="text/javascript" src="/js/sortable.js"></script>
+<script>
+    new Sortable(document.getElementById('example1'), {
+      animation: 150,
+      ghostClass: 'blue-background-class'
+    });
+  </script>
           <script type="text/javascript" src="/js/vkbeauty.js"></script>
         </body>
       </html>`
