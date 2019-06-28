@@ -26,6 +26,10 @@
        margin: auto;
        color: #fff;
 	}
+	.xml-list-box{
+	  width: 25%;
+	  margin-left: 20px; 
+	}
 	.main-logo, .main-header-account{
         height: inherit;
         font-size: 14px;
@@ -210,7 +214,7 @@
     /*END UPLOAD CONTAINER*/
     .ques-table{
        height: 500px;
-       width: 400px;
+       /*width: 400px;*/
        padding-right: 50px;
        overflow-y: scroll;
     }
@@ -280,6 +284,9 @@
 	 }
 	 .margin-top-5{
 	 	margin-top: 5px;
+	 }
+	 .margin-top-7{
+	 	margin-top: 7px;
 	 }
 	 .margin-top-15{
        margin-top: 15px;

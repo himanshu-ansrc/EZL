@@ -332,15 +332,12 @@ app.post('/random-variables', (req,res)=>{
 	 const randomList = req.body.random_info.split('#');
 	 let allVariables = '';
 	 for(let x of randomList){
-
          let varible = x.split('\n');
          console.log(varible);
          let listData = '';
-         
          varible = varible.filter(function (el) {
 		  return el != '';
 		 });
-
 		 console.log(varible)
          for(let y=1; y<varible.length; y++){
          	 listData += `<row><![CDATA[${varible[y]}]]></row>`;

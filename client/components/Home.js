@@ -4,6 +4,7 @@ import Test from './Test';
 import ReactDND from './ReactDND'
 
 class Home extends Component{
+    xmlComponentsdata = {};
 	  state = {
            QType: "SB",
            tableList : [],
@@ -120,6 +121,7 @@ class Home extends Component{
         console.log(this.state);
         document.getElementsByName(this.state.eleId)[0].value = table1;
         document.getElementById('show_xml').value = vkbeautify.xml(table1);
+        this.xmlComponentsdata['table'] = vkbeautify.xml(table1);
         document.getElementById('popup_close').click();
         this.addXmlButton("table");
       }
@@ -169,6 +171,7 @@ class Home extends Component{
                   let {data} = await axios.post('/image-data', {imgName, imgSize, imgMime, imgBase64});
                        document.getElementsByName('image_data')[0].value = data.data;
                        document.getElementById('show_xml').value = vkbeautify.xml(data.data);
+                       this.xmlComponentsdata['image'] = vkbeautify.xml(data.data);
              }, false);
          reader.readAsDataURL(files);
          this.addXmlButton("image");
@@ -178,6 +181,7 @@ class Home extends Component{
         let {data} = await axios.post('/random-variables', {random_info: input.value});
         document.getElementById('random_input').value = data;
         document.getElementById('show_xml').value = vkbeautify.xml(data);
+        this.xmlComponentsdata['randomvariable'] = vkbeautify.xml(data);
         document.getElementById('popup_close').click();
         this.addXmlButton("randomvariable");
       }
@@ -195,6 +199,15 @@ class Home extends Component{
            let a = this.state.xmlList.filter((x)=>x!==id);
            console.log(a);
            this.setState({xmlList: a});
+      }
+      exportXML = (e)=>{
+          e.preventDefault();
+          let a = document.getElementById('example1').getElementsByClassName('xml-list');
+          let b = [];
+          for(let x of a){           
+              b.push(this.xmlComponentsdata[x.id]);
+          }
+          console.log(b)
       }
       render(){
       	 return(
@@ -232,39 +245,15 @@ class Home extends Component{
 	        	 <div className="flex main-content-wrapper">
 		        	 <div className="flex space-bw main-content">
 		        	   <div className="ques-table">
-                    <table className="prob-table">
-                      <tbody>
-                         <tr className="margin-top-5">
-                           <td><label>Generate table</label></td>
-                           <td><a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a></td> 
-                         </tr>
-                      </tbody>
-                    </table>
-                    <table className="prob-table">
-                      <tbody>
-                         <tr className="margin-top-5">
-                           <td><label>Random variable</label></td>
-                           <td><a href="#random_variables_popup" className="btn-default margin-top-20">Generate</a></td> 
-                         </tr>
-                      </tbody>
-                    </table>
-                    <table className="prob-table">
-                      <tbody>
-                         <tr className="margin-top-5">
-                           <td><label>Add image</label></td>
-                           <td><input type="file" onChange={this.addImage}/></td> 
-                         </tr>
-                      </tbody>
-                    </table>
-                    <table className="prob-table">
+                    {/*<table className="prob-table">
                       <tbody>
                          <tr className="margin-top-5">
                            <td><label>Open form</label></td>
                            <td><input type="checkbox" onClick={this.toogleForm}/></td> 
                          </tr>
                       </tbody>
-                    </table>
-									<form method="post" onSubmit={this.dataSubmit} className="display-none" id="main_form">
+                    </table>*/}
+									<form method="post" onSubmit={this.dataSubmit} className="" id="main_form">
 										<table className="prob-table">
 										   <tbody>
 										      <tr className="margin-top-5">
@@ -312,10 +301,10 @@ class Home extends Component{
                             </tr>
                           */}
                         
-                          <tr className="margin-top-5">
+                          {/*<tr className="margin-top-5">
                             <td></td>
                             <td><textarea className="input-box" name="image_data" rows="5" cols="30"></textarea></td> 
-                          </tr>
+                          </tr>*/}
 
 										  	  <tr className="margin-top-5">
 										        <td></td>
@@ -324,20 +313,57 @@ class Home extends Component{
 										   </tbody>
 										</table>									
 									</form>
+
+                  <table className="prob-table">
+                      <tbody>
+                         <tr className="margin-top-5">
+                           <td><label>Generate table</label></td>
+                           <td><a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a></td> 
+                         </tr>
+                      </tbody>
+                    </table>
+                    <table className="prob-table">
+                      <tbody>
+                         <tr className="margin-top-5">
+                           <td><label>Random variable</label></td>
+                           <td><a href="#random_variables_popup" className="btn-default margin-top-20">Generate</a></td> 
+                         </tr>
+                      </tbody>
+                    </table>
+                    <table className="prob-table">
+                      <tbody>
+                         <tr className="margin-top-5">
+                           <td><label>Add image</label></td>
+                           <td><input type="file" onChange={this.addImage}/></td> 
+                         </tr>
+                      </tbody>
+                    </table>
+                    <table className="prob-table">
+                      <tbody>
+                         <tr className="margin-top-5">
+                           <td></td>
+                           <td><a href="" className="btn-default" onClick={this.exportXML}>Add to xml</a></td> 
+                         </tr>
+                      </tbody>
+                    </table>
+
+
 			        	 	  </div>
                     <div>
                     	<textarea id="show_xml" rows="30" cols="50" placeholder="Output as XML"></textarea>
                     </div>
-                    <div>
-                            <div id="example1" className="list-group col">
+                    <div className="xml-list-box">
+                            <div className="margin-top-7">
+                              <div id="example1" className="list-group col">
                               {this.state.xmlList.length>0 && this.state.xmlList.map((res)=>{
                                   return (<div className="display-block">
                                               <div className="list-group-item">
-                                                   <a className="btn-default display-inline margin-top-20" id={res}>{res}</a>
+                                                   <a className="btn-default display-inline margin-top-20 xml-list" id={res}>{res}</a>
                                                    <a onClick={this.removeXmlElement} className="margin-lft-20 pointer" data-id={res}>X</a>
                                               </div>
                                           </div> );
                               })}
+                              </div>
                             </div>
                     </div>
 		        	 </div>
