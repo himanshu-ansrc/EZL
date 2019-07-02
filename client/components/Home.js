@@ -9,6 +9,10 @@ class Home extends Component{
            QType: "SB",
            tableList : [],
            xmlList : [],
+           ansType: [],
+           typeBoolean: [],
+           typeNumeric: [],
+           typeMultiple: []
 	  }
     componentDidMount(){
          
@@ -19,9 +23,13 @@ class Home extends Component{
 	  dataSubmit = async (e)=>{
          e.preventDefault();
          let obj = {};
+        // console.log( e.target.elements)
          for(let x of e.target.elements){
          	if(x.type!=='submit'){
-               console.log(x.name)
+               console.log(x.type)
+               if(x.type=='radio'){
+
+               }
                obj[x.name] = x.value; 
          	}
          }
@@ -64,6 +72,109 @@ class Home extends Component{
         			   <td><label>Question3</label></td>
         			   <td><textarea className="input-box" name="ques_txt" rows="5" cols="30"></textarea></td> 
         			 </tr>
+            )
+      }
+      MC = ()=>{
+            return (
+               <Fragment>
+                 <tr className="margin-top-5">
+                   <td><label>Question3</label></td>
+                   <td><textarea className="input-box" name="ques_txt" rows="5" cols="30"></textarea></td> 
+                 </tr>
+                 <tr className="margin-top-5">
+                    <td><label>Choises with Answer</label></td>
+                    <td className="flex-base"><textarea className="input-box" name="mc_answer" rows="2" cols="10"></textarea></td> 
+                 </tr>
+                 <tr className="margin-top-5">
+                    <td><label>Common feed</label></td>
+                    <td className="flex-base"><textarea className="input-box" name="mc_ques_feed" rows="2" cols="10"></textarea></td> 
+                 </tr>
+               </Fragment>
+            )
+      }
+      handleAnswerTypeChange = (e)=>{
+            let a = this.state.ansType;
+            let count = a.length;
+            if(e.target.value=='0'){
+               a.push(this.generateBoolean(count+1));
+               this.setState({ansType: a});
+            }else if(e.target.value=='1'){
+               a.push(this.generateNumeric(count+1));
+               this.setState({ansType: a});
+            }else{
+               a.push(this.generateMultiple(count+1));
+               this.setState({ansType: a});
+            }
+      }
+      generateBoolean = ()=>{
+          return (<Fragment>
+                        <tr className="margin-top-5">
+                          <td><label>Boolean Var</label></td>
+                          <td className="flex-base"><textarea className="input-box" name="ques_hint" rows="2" cols="10"></textarea></td> 
+                        </tr>
+                        <tr className="margin-top-5">
+                          <td><label>Answer</label></td>
+                          <td className="flex-base"><textarea className="input-box" value="True" name="mc_ques_feed" rows="2" cols="10"></textarea></td> 
+                        </tr>
+                        <hr/>
+                 </Fragment>);
+      }
+      generateNumeric = ()=>{
+          return (<Fragment>
+                        <tr className="margin-top-5">
+                          <td><label>Numeric Var</label></td>
+                          <td className="flex-base"><textarea className="input-box" name="ques_hint" rows="2" cols="10"></textarea></td> 
+                        </tr>
+                        <tr className="margin-top-5">
+                          <td><label>Answer</label></td>
+                          <td className="flex-base"><textarea className="input-box" name="mc_ques_feed" rows="2" cols="10"></textarea></td> 
+                        </tr>
+                        <tr className="margin-top-5">
+                          <td><label>precisionType</label></td>
+                          <td className="flex-base">
+                                <select className="input-box" name="ans_type">
+                                        <option value="0">0</option>
+                                        <option value="1">1</option>
+                                        <option value="3">2</option>
+                                </select>
+                          </td> 
+                        </tr>
+                        <tr className="margin-top-5">
+                          <td><label>precisionString</label></td>
+                          <td className="flex-base"><textarea className="input-box" value="#.####" name="mc_ques_feed" rows="2" cols="10"></textarea></td> 
+                        </tr>
+                        <hr/>
+                  </Fragment>);
+      }
+      generateMultiple = ()=>{
+          return (<Fragment>
+                        <tr className="margin-top-5">
+                          <td><label>Choises with Answer</label></td>
+                          <td className="flex-base"><textarea className="input-box" name="mc_ques_feed" rows="2" cols="10"></textarea></td> 
+                        </tr>
+                        <hr/>
+                  </Fragment>);
+      }
+      WK = ()=>{
+            return (
+               <Fragment>
+                 <tr className="margin-top-5">
+                   <td><label>Question</label></td>
+                   <td><textarea className="input-box" name="ques_txt" rows="5" cols="30"></textarea></td> 
+                 </tr>
+                 <hr/>
+                 {this.state.ansType.length>0 && this.state.ansType.map(x=>x)}
+                 <tr className="margin-top-5">
+                    <td><label>Question Type</label></td>
+                    <td className="flex-base">
+                        <select className="input-box" name="ans_type" onChange={this.handleAnswerTypeChange}>
+                                <option value="0">Boolean</option>
+                                <option value="1">Numeric</option>
+                                <option value="3">Multiple</option>
+                        </select>
+                    </td> 
+                  </tr>
+               </Fragment>
             )
       }
       addTable = (e)=>{
@@ -188,7 +299,6 @@ class Home extends Component{
       toogleForm = ()=>{
           document.getElementById('main_form').classList.toggle('display-none');
       }
-
       addXmlButton(eletype){
           let a = this.state.xmlList;
               a.push(eletype);
@@ -265,6 +375,8 @@ class Home extends Component{
 											    <td>
 									        	  <select className="input-box" name="ques_type" onChange={this.handleChange}>
 									        	    <option value="SB">SB</option>
+                                <option value="MC">MC</option>
+                                <option value="WK">WK</option>
 										            <option value="TF">TF</option>
 										            <option value="CA">CA</option>
 										            <option value="ES">ES</option>
@@ -274,14 +386,13 @@ class Home extends Component{
 										            <option value="RA">RA</option>
 										            <option value="SA">SA</option>
 										            <option value="YN">YN</option>
-										            <option value="MC">MC</option>
 										          </select>
 											    </td> 
 											  </tr>
 											  <tr className="margin-top-5">
-											    <td><label>Learning Obj</label></td>
-											    <td><input className="input-box" type="text" name="ques_obj" placeholder="Enter question objective"/></td> 
-											  </tr>
+											    <td><label>Level</label></td>
+											    <td><input className="input-box" type="text" name="ques_level" value="Easy" placeholder="Enter question objective"/></td> 
+											  </tr> 
 											  <tr className="margin-top-5">
 											    <td><label>Topic</label></td>
 											    <td><input className="input-box" type="text" name="ques_topic" placeholder="Enter question topic"/></td> 
@@ -289,6 +400,8 @@ class Home extends Component{
                           {this.state.QType=='SB' && this.SB()}
                           {this.state.QType=='TF' && this.TF()}
                           {this.state.QType=='CA' && this.CA()}
+                          {this.state.QType=='MC' && this.MC()}
+                          {this.state.QType=='WK' && this.WK()}
                           {/*
                            <tr className="margin-top-5">
                             <td></td>
@@ -305,7 +418,7 @@ class Home extends Component{
                             <td></td>
                             <td><textarea className="input-box" name="image_data" rows="5" cols="30"></textarea></td> 
                           </tr>*/}
-
+                          
 										  	  <tr className="margin-top-5">
 										        <td></td>
 											      <td><button  className="btn-default margin-top-20">Generate</button></td> 
@@ -313,8 +426,7 @@ class Home extends Component{
 										   </tbody>
 										</table>									
 									</form>
-
-                  <table className="prob-table">
+                  {/*<table className="prob-table">
                       <tbody>
                          <tr className="margin-top-5">
                            <td><label>Generate table</label></td>
@@ -346,8 +458,7 @@ class Home extends Component{
                          </tr>
                       </tbody>
                     </table>
-
-
+                    */}
 			        	 	  </div>
                     <div>
                     	<textarea id="show_xml" rows="30" cols="50" placeholder="Output as XML"></textarea>

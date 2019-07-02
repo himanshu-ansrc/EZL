@@ -168,7 +168,7 @@ function problemTemplate(references){
             text = `<group><p>${references.ques_txt}</p><p>${imgData}</p>${optionsWrapper}`;
         }else
 	    	text = `<group><p>${references.ques_txt}</p>${optionsWrapper}`;
-      }
+        }
 
 
       if(references.ques_img!=='' && references.ques_type!=="mcq"){
@@ -352,21 +352,156 @@ app.post('/random-variables', (req,res)=>{
      res.send(`<randomVariables>${allVariables}</randomVariables>`);
 })
 
+
+function categories(ques_type, level){
+	 return `<categories>
+		      <internal_category>
+		        <catid>13570164620437362</catid>
+		        <title><![CDATA[Learning Objective: 01-01 ${ques_type} Questions]]></title>
+		      </internal_category>
+		      <internal_category>
+		        <catid>13570164620437396</catid>
+		        <title><![CDATA[Topic: 01-01 ${ques_type}]]></title>
+		      </internal_category>
+		      <internal_category>
+		        <catid>1136040701596</catid>
+		        <title><![CDATA[Difficulty: ${level}]]></title>
+		      </internal_category>
+		      <internal_category>
+		        <catid>1136040746617</catid>
+		        <title><![CDATA[Bloom's: Remember]]></title>
+		      </internal_category>
+		    </categories>`;
+}
+
+
+function questionProperties(){
+	return `<questionProperties>
+		        <property name="layout" type="string" value="vertical" />
+		        <property name="pageTag" type="string" value="" />
+		        <property name="completeIncompleteGrading" type="string" value="false" />
+		        <property name="instructor_info" type="string" value="" />
+		        <property name="forceManualScoring" type="string" value="automatic" />
+		        <property name="commonFeedback" type="string" value="&lt;p&gt;Feedback test - answer is B. There is an image below.&lt;/p&gt;
+		        &lt;p&gt;%media:mgh_logo_rgb_57_96dpi_jpg.ext%&lt;/p&gt;" />
+		        <property name="problemSolution" type="string" value="" />
+		        <property name="audioPlayerPosition" type="string" value="above" />
+		        <property name="otherItem" type="string" value="" />
+		        <property name="useCommonFeedback" type="boolean" value="false" />
+		        <property name="order" type="string" value="as listed" />
+	        </questionProperties>`;
+}
+
+function MC(ques_items){
+	  let count = ques_items.mc_answer.split("#")[0];
+	  let answer = ques_items.mc_answer.split("#")[1];
+      let data = ``;
+      let alpha = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M'];
+      for(let x=1; x<=count; x++){
+     	  let a = x==answer? 1: 0;
+  	      data += `<choice>
+	              <distractor><![CDATA[${alpha[x-1]}]]></distractor>
+	                <credit>${a}</credit>
+	              <feedback></feedback>
+	             </choice>`;   	  
+      }
+	  return `<multipleChoice>
+		        <stem><![CDATA[<p>${ques_items.ques_txt}</p>
+		        </stem>
+		         <commonFeedback><![CDATA[<p>Feedback test - ${ques_items.mc_ques_feed}</p>]]>
+		         </commonFeedback>
+			        <choices>
+			        ${data}
+			        </choices>
+		      </multipleChoice>`;
+}
+
+function WK(ques_items){
+	  let answer = ``;
+	  if(ques_items.ans_type='0'){
+	  	    answer = `<booleanAnswer>
+				          <name><![CDATA[A]]></name>
+				          <weight>100</weight>
+				          <answerProperties>
+				            <property name="completeIncompleteGrading" type="string" value="false" />
+				          </answerProperties>
+				          <correctAnswer>true</correctAnswer>
+			         </booleanAnswer>`;
+	  }else if(ques_items.ans_type='1'){
+            answer = `<numberAnswer>
+				          <name><![CDATA[B]]></name>
+				          <weight>100</weight>
+				          <answerProperties>
+				            <property name="completeIncompleteGrading" type="string" value="false" />
+				          </answerProperties>
+				          <fieldWidth>7</fieldWidth>
+				          <correctAnswer><![CDATA[[A(3)]]]></correctAnswer>
+				          <formatString><![CDATA[#.####]]></formatString>
+				          <precisionString><![CDATA[2]]></precisionString>
+				          <units></units>
+				          <precisionType>2</precisionType>
+				          <engineeringUnits>false</engineeringUnits>
+				          <currency>false</currency>
+				       </numberAnswer>`;
+	  }else if(ques_items.ans_type='2'){
+            answer = `<multipleChoiceAnswer>
+			          <name><![CDATA[C]]></name>
+			          <weight>100</weight>
+			          <answerProperties>
+			            <property name="presentation" type="string" value="dropDown" />
+			            <property name="completeIncompleteGrading" type="string" value="false" />
+			            <property name="width" type="string" value="" />
+			            <property name="prompt" type="string" value="" />
+			            <property name="scramble" type="string" value="true" />
+			          </answerProperties>
+			          <choices>
+			            <choice>
+			              <distractor><![CDATA[&#8598;]]></distractor>
+			              <correct>false</correct>
+			            </choice>
+			            <choice>
+			              <distractor><![CDATA[&#8599;]]></distractor>
+			              <correct>false</correct>
+			            </choice>
+			            <choice>
+			              <distractor><![CDATA[&#8601;]]></distractor>
+			              <correct>false</correct>
+			            </choice>
+			            <choice>
+			              <distractor><![CDATA[&#8600;]]></distractor>
+			              <correct>true</correct>
+			            </choice>
+			          </choices>
+			        </multipleChoiceAnswer>`;
+	  }
+  	  let data = `<worksheet>
+	                  <stem><![CDATA[<p>${ques_items.ques_txt}</p></stem>
+			          <commonFeedback><![CDATA[<p>Feedback test - ${ques_items.mc_ques_feed}</p>]]>
+			          </commonFeedback>
+			          <answers>${answer}</answers>
+                  </worksheet>`;
+	  return data;
+}
+
 app.post('/', (req, res)=>{
 	    let text = null;
         let question =   `<question>
                           <title><![CDATA[I am a section break]]></title>
                           <multipart>${req.body.ques_id}</multipart>
-                          <type>${req.body.ques_type}</type>
-                          <categories>
-                            <internal_category>
-					         <title><![CDATA[Learning Objective: 1.1 ${req.body.ques_obj}]]></title>
-					        </internal_category>
-					        <internal_category>
-					           <title><![CDATA[Topic: ${req.body.ques_topic}]]></title>
-					        </internal_category>
-					     </categories>`;
-        
+                          <type>${req.body.ques_type}</type>`;
+         
+        req.body.ques_txt = req.body.ques_txt.replace(/<media>.+<\/media>/ig, function (match) {
+        	      match = match.replace('<media>', '');
+        	      match = match.replace('</media>', '');
+        	      let k = match.split('.');
+        	      let a = k.pop();
+        	      let b = k.join('');
+        	      if(a=='mml'){
+                     return "%" + "media:" + b + "_"+ a+"%"  ;
+        	      }else
+				     return "%" + "media:" + b + "_"+ a + ".ext"+"%"  ;
+				}
+        );
         if(req.body.ques_type=="SB"){
            question += SB(req.body.ques_txt)
         }
@@ -376,7 +511,16 @@ app.post('/', (req, res)=>{
         if(req.body.ques_type=="CA"){
            question += CA(req.body)
         }
-
+        if(req.body.ques_type=="MC"){
+           question += categories("Multiple Choice", req.body.ques_level);
+           question += questionProperties();
+           question += MC(req.body)
+        }
+        if(req.body.ques_type=="WK"){
+           question += categories("Multiple Choice", req.body.ques_level);
+           question += questionProperties();
+           question += WK(req.body);
+        }
         text = `${question}
                </question>`;
         
