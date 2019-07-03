@@ -11,8 +11,9 @@ import Template from './../template.js'
 const app = express();
 
 
-app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
+
 
 
 const CURRENT_WORKING_DIR = process.cwd();
@@ -253,10 +254,6 @@ function TF(question){
             </trueFalse>`;		    
 }
 
-
-
-
-
 function CA(question){
 	return `<checkAll>
 		      <stem><![CDATA[<p>cata&nbsp; question</p>]]></stem>
@@ -417,63 +414,165 @@ function MC(ques_items){
 }
 
 function WK(ques_items){
-	  let answer = ``;
-	  if(ques_items.ans_type='0'){
-	  	    answer = `<booleanAnswer>
-				          <name><![CDATA[A]]></name>
-				          <weight>100</weight>
-				          <answerProperties>
-				            <property name="completeIncompleteGrading" type="string" value="false" />
-				          </answerProperties>
-				          <correctAnswer>true</correctAnswer>
-			         </booleanAnswer>`;
-	  }else if(ques_items.ans_type='1'){
-            answer = `<numberAnswer>
-				          <name><![CDATA[B]]></name>
-				          <weight>100</weight>
-				          <answerProperties>
-				            <property name="completeIncompleteGrading" type="string" value="false" />
-				          </answerProperties>
-				          <fieldWidth>7</fieldWidth>
-				          <correctAnswer><![CDATA[[A(3)]]]></correctAnswer>
-				          <formatString><![CDATA[#.####]]></formatString>
-				          <precisionString><![CDATA[2]]></precisionString>
-				          <units></units>
-				          <precisionType>2</precisionType>
-				          <engineeringUnits>false</engineeringUnits>
-				          <currency>false</currency>
-				       </numberAnswer>`;
-	  }else if(ques_items.ans_type='2'){
-            answer = `<multipleChoiceAnswer>
-			          <name><![CDATA[C]]></name>
-			          <weight>100</weight>
-			          <answerProperties>
-			            <property name="presentation" type="string" value="dropDown" />
-			            <property name="completeIncompleteGrading" type="string" value="false" />
-			            <property name="width" type="string" value="" />
-			            <property name="prompt" type="string" value="" />
-			            <property name="scramble" type="string" value="true" />
-			          </answerProperties>
-			          <choices>
-			            <choice>
-			              <distractor><![CDATA[&#8598;]]></distractor>
-			              <correct>false</correct>
-			            </choice>
-			            <choice>
-			              <distractor><![CDATA[&#8599;]]></distractor>
-			              <correct>false</correct>
-			            </choice>
-			            <choice>
-			              <distractor><![CDATA[&#8601;]]></distractor>
-			              <correct>false</correct>
-			            </choice>
-			            <choice>
-			              <distractor><![CDATA[&#8600;]]></distractor>
-			              <correct>true</correct>
-			            </choice>
-			          </choices>
-			        </multipleChoiceAnswer>`;
+	  console.log(ques_items)
+	  let total_answers = ques_items.total_answers;
+	  let multipleArray = [], booleanArray = [], numericArray = [];
+	  for(let x=1; x<=total_answers; x++){
+	  	    let booleanJSON  = {} , numericJSON = {};
+	  	    let multipleChoise = ques_items["multiple_answer_"+x];
+	  	    if(multipleChoise)
+               multipleArray.push(multipleChoise);
+	  	    if(ques_items["boolean_variable_"+x])
+               booleanJSON['boolean_variable'] = ques_items["boolean_variable_"+x];
+	  	    if(ques_items["boolean_answer_"+x])
+               booleanJSON['boolean_answer'] = ques_items["boolean_answer_"+x];
+            if(ques_items["numeric_variable_"+x])
+               numericJSON['numeric_variable'] = ques_items["numeric_variable_"+x];	  	    
+            if(ques_items["numeric_answer_"+x])
+               numericJSON['numeric_answer'] = ques_items["numeric_answer_"+x];	
+            if(ques_items["numeric_precisiontype_"+x])
+               numericJSON['numeric_precisiontype'] = ques_items["numeric_precisiontype_"+x];
+            if(ques_items["numeric_precisionstring_"+x])
+               numericJSON['numeric_precisionstring'] = ques_items["numeric_precisionstring_"+x];
+            if(ques_items["numeric_formatstring_"+x])
+               numericJSON['numeric_formatstring'] = ques_items["numeric_formatstring_"+x];
+
+            if(Object.keys(booleanJSON).length!==0)
+               booleanArray.push(booleanJSON)
+            if(Object.keys(numericJSON).length!==0) 
+               numericArray.push(numericJSON)
+           
 	  }
+
+	  console.log(booleanArray)
+	  console.log(multipleArray);
+	  console.log(numericArray);
+      
+      let booleanString = '', numericString = '', multipleString = '';
+      if(booleanArray.length>0){
+      	    for(let x of booleanArray){
+      	        booleanString += `<booleanAnswer>
+				           <name><![CDATA[${x['boolean_variable']}]]></name>
+				              <weight>100</weight>
+				           <answerProperties>
+				               <property name="completeIncompleteGrading" type="string" value="false" />
+				           </answerProperties>
+				            <correctAnswer>${x['boolean_answer']}</correctAnswer>
+			              </booleanAnswer>`;	
+      	    }
+
+      }  
+      if(multipleArray.length>0){
+      	    for(let x of multipleArray){
+	            multipleString += `<multipleChoiceAnswer>
+							          <name><![CDATA[C]]></name>
+							          <weight>100</weight>
+							          <answerProperties>
+							            <property name="presentation" type="string" value="dropDown" />
+							            <property name="completeIncompleteGrading" type="string" value="false" />
+							            <property name="width" type="string" value="" />
+							            <property name="prompt" type="string" value="" />
+							            <property name="scramble" type="string" value="true" />
+							          </answerProperties>
+							          <choices>
+							            <choice>
+							              <distractor><![CDATA[&#8598;]]></distractor>
+							              <correct>false</correct>
+							            </choice>
+							            <choice>
+							              <distractor><![CDATA[&#8599;]]></distractor>
+							              <correct>false</correct>
+							            </choice>
+							            <choice>
+							              <distractor><![CDATA[&#8601;]]></distractor>
+							              <correct>false</correct>
+							            </choice>
+							            <choice>
+							              <distractor><![CDATA[&#8600;]]></distractor>
+							              <correct>true</correct>
+							            </choice>
+							          </choices>
+							        </multipleChoiceAnswer>`;
+      	    }
+      }
+      if(numericArray.length>0){
+      	    for(let x of numericArray){
+	            numericString += `<numberAnswer>
+						          <name><![CDATA[${x['numeric_variable']}]]></name>
+						          <weight>100</weight>
+						          <answerProperties>
+						            <property name="completeIncompleteGrading" type="string" value="false" />
+						          </answerProperties>
+						          <fieldWidth>7</fieldWidth>
+						          <correctAnswer><![CDATA[${x['numeric_answer']}]]></correctAnswer>
+						          <formatString><![CDATA[${x['numeric_precisiontype']}]]></formatString>
+						          <precisionString><![CDATA[${x['numeric_precisionstring']}]]></precisionString>
+						          <units></units>
+						          <precisionType>${x['numeric_formatstring']}</precisionType>
+						          <engineeringUnits>false</engineeringUnits>
+						          <currency>false</currency>
+						       </numberAnswer>`;	
+      	    }
+      }
+	  let answer = ``;
+	  // if(ques_items.ans_type='0'){
+	  // 	    answer = `<booleanAnswer>
+			// 	          <name><![CDATA[A]]></name>
+			// 	          <weight>100</weight>
+			// 	          <answerProperties>
+			// 	            <property name="completeIncompleteGrading" type="string" value="false" />
+			// 	          </answerProperties>
+			// 	          <correctAnswer>true</correctAnswer>
+			//          </booleanAnswer>`;
+	  // }else if(ques_items.ans_type='1'){
+   //          answer = `<numberAnswer>
+			// 	          <name><![CDATA[B]]></name>
+			// 	          <weight>100</weight>
+			// 	          <answerProperties>
+			// 	            <property name="completeIncompleteGrading" type="string" value="false" />
+			// 	          </answerProperties>
+			// 	          <fieldWidth>7</fieldWidth>
+			// 	          <correctAnswer><![CDATA[[A(3)]]]></correctAnswer>
+			// 	          <formatString><![CDATA[#.####]]></formatString>
+			// 	          <precisionString><![CDATA[2]]></precisionString>
+			// 	          <units></units>
+			// 	          <precisionType>2</precisionType>
+			// 	          <engineeringUnits>false</engineeringUnits>
+			// 	          <currency>false</currency>
+			// 	       </numberAnswer>`;
+	  // }else if(ques_items.ans_type='2'){
+   //          answer = `<multipleChoiceAnswer>
+			//           <name><![CDATA[C]]></name>
+			//           <weight>100</weight>
+			//           <answerProperties>
+			//             <property name="presentation" type="string" value="dropDown" />
+			//             <property name="completeIncompleteGrading" type="string" value="false" />
+			//             <property name="width" type="string" value="" />
+			//             <property name="prompt" type="string" value="" />
+			//             <property name="scramble" type="string" value="true" />
+			//           </answerProperties>
+			//           <choices>
+			//             <choice>
+			//               <distractor><![CDATA[&#8598;]]></distractor>
+			//               <correct>false</correct>
+			//             </choice>
+			//             <choice>
+			//               <distractor><![CDATA[&#8599;]]></distractor>
+			//               <correct>false</correct>
+			//             </choice>
+			//             <choice>
+			//               <distractor><![CDATA[&#8601;]]></distractor>
+			//               <correct>false</correct>
+			//             </choice>
+			//             <choice>
+			//               <distractor><![CDATA[&#8600;]]></distractor>
+			//               <correct>true</correct>
+			//             </choice>
+			//           </choices>
+			//         </multipleChoiceAnswer>`;
+	  // }
+	  console.log(numericString);
+	  answer = booleanString+numericString+multipleString;
   	  let data = `<worksheet>
 	                  <stem><![CDATA[<p>${ques_items.ques_txt}</p></stem>
 			          <commonFeedback><![CDATA[<p>Feedback test - ${ques_items.mc_ques_feed}</p>]]>

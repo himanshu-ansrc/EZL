@@ -17,6 +17,10 @@
 		background: #222835;
 
 	}
+	.delete{
+	    vertical-align: top;
+        padding-left: 10px;
+	}
 	.main-header-box{
        max-width: 1224px;
        display: flex;
@@ -114,6 +118,9 @@
 	}
 	.color-90949c{
        color: #90949c;
+	}
+    .color-ff5722{
+       color: #ff5722;
 	}
     .profile-thumbnail{
     	width: 50px;

@@ -95,6 +95,7 @@ class Home extends Component{
       handleAnswerTypeChange = (e)=>{
             let a = this.state.ansType;
             let count = a.length;
+            document.getElementById('total_answers').value = count+1;
             if(e.target.value=='0'){
                a.push(this.generateBoolean(count+1));
                this.setState({ansType: a});
@@ -106,33 +107,40 @@ class Home extends Component{
                this.setState({ansType: a});
             }
       }
-      generateBoolean = ()=>{
+      deleteAnswerType = (e, index)=>{
+            let a = this.state.ansType;
+            a = a.filter((x, y)=>y!==(index-1))
+            this.setState({ansType: a});
+      }
+      generateBoolean = (index)=>{
           return (<Fragment>
                         <tr className="margin-top-5">
                           <td><label>Boolean Var</label></td>
-                          <td className="flex-base"><textarea className="input-box" name="ques_hint" rows="2" cols="10"></textarea></td> 
+                          <td className="flex-base"><textarea className="input-box" name={"boolean_variable_"+index} rows="2" cols="10"></textarea></td> 
+                          <td className="delete"><a href="#" onClick={(e)=>this.deleteAnswerType(e, index)}><i class="icon wb-trash color-ff5722"></i></a></td>
                         </tr>
                         <tr className="margin-top-5">
                           <td><label>Answer</label></td>
-                          <td className="flex-base"><textarea className="input-box" value="True" name="mc_ques_feed" rows="2" cols="10"></textarea></td> 
+                          <td className="flex-base"><textarea className="input-box" value="True" name={"boolean_answer_"+index} rows="2" cols="10"></textarea></td> 
                         </tr>
                         <hr/>
                  </Fragment>);
       }
-      generateNumeric = ()=>{
+      generateNumeric = (index)=>{
           return (<Fragment>
                         <tr className="margin-top-5">
                           <td><label>Numeric Var</label></td>
-                          <td className="flex-base"><textarea className="input-box" name="ques_hint" rows="2" cols="10"></textarea></td> 
+                          <td className="flex-base"><textarea className="input-box" name={"numeric_variable_"+index} rows="2" cols="10"></textarea></td> 
+                          <td className="delete"><a href="#" onClick={(e)=>this.deleteAnswerType(e, index)}><i class="icon wb-trash color-ff5722"></i></a></td>
                         </tr>
                         <tr className="margin-top-5">
                           <td><label>Answer</label></td>
-                          <td className="flex-base"><textarea className="input-box" name="mc_ques_feed" rows="2" cols="10"></textarea></td> 
+                          <td className="flex-base"><textarea className="input-box" name={"numeric_answer_"+index} rows="2" cols="10"></textarea></td> 
                         </tr>
                         <tr className="margin-top-5">
                           <td><label>precisionType</label></td>
                           <td className="flex-base">
-                                <select className="input-box" name="ans_type">
+                                <select className="input-box" name={"numeric_precisiontype_"+index}>
                                         <option value="0">0</option>
                                         <option value="1">1</option>
                                         <option value="3">2</option>
@@ -141,16 +149,21 @@ class Home extends Component{
                         </tr>
                         <tr className="margin-top-5">
                           <td><label>precisionString</label></td>
-                          <td className="flex-base"><textarea className="input-box" value="#.####" name="mc_ques_feed" rows="2" cols="10"></textarea></td> 
+                          <td className="flex-base"><textarea className="input-box" value="2" name={"numeric_precisionstring_"+index} rows="2" cols="10"></textarea></td> 
+                        </tr>
+                        <tr className="margin-top-5">
+                          <td><label>formatString</label></td>
+                          <td className="flex-base"><textarea className="input-box" value="#.####" name={"numeric_formatstring_"+index} rows="2" cols="10"></textarea></td> 
                         </tr>
                         <hr/>
                   </Fragment>);
       }
-      generateMultiple = ()=>{
+      generateMultiple = (index)=>{
           return (<Fragment>
                         <tr className="margin-top-5">
                           <td><label>Choises with Answer</label></td>
-                          <td className="flex-base"><textarea className="input-box" name="mc_ques_feed" rows="2" cols="10"></textarea></td> 
+                          <td className="flex-base"><textarea className="input-box" name={"multiple_answer_"+index} rows="2" cols="10"></textarea></td> 
+                          <td className="delete"><a href="#" onClick={(e)=>this.deleteAnswerType(e, index)}><i class="icon wb-trash color-ff5722"></i></a></td>
                         </tr>
                         <hr/>
                   </Fragment>);
@@ -164,6 +177,7 @@ class Home extends Component{
                  </tr>
                  <hr/>
                  {this.state.ansType.length>0 && this.state.ansType.map(x=>x)}
+                 <input type="hidden" id="total_answers" name="total_answers"/>
                  <tr className="margin-top-5">
                     <td><label>Question Type</label></td>
                     <td className="flex-base">
