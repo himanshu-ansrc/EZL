@@ -158,14 +158,38 @@ class Home extends Component{
                         <hr/>
                   </Fragment>);
       }
+      addMultipleOptions = (e, index)=>{
+           let dataCount = e.target.dataset.count;
+               e.target.dataset.count = parseInt(dataCount)+1;
+           document.getElementById("multiple_count_"+index).value = e.target.dataset.count;
+           let a = document.createElement("tr");
+               a.id="multiple_divider"+index+"_"+e.target.dataset.count;
+               a.className = "margin-top-5";
+           let b = document.createElement("td");
+               a.appendChild(b)
+           let c = document.createElement('td'); a.appendChild(c);
+           
+           let d = document.createElement('textarea'); 
+               d.className="input-box"; d.rows="2"; d.cols="10";
+               d.name="multiple_answer_"+index+"_"+e.target.dataset.count;
+               c.appendChild(d)
+           document.getElementById("multiple_divider"+index+"_"+dataCount).parentNode.insertBefore(a, document.getElementById("multiple_divider"+index+"_"+dataCount).nextSibling);
+      }
       generateMultiple = (index)=>{
           return (<Fragment>
-                        <tr className="margin-top-5">
+                        <tr className="margin-top-5" id={"multiple_divider"+index+"_1"}>
                           <td><label>Choises with Answer</label></td>
-                          <td className="flex-base"><textarea className="input-box" name={"multiple_answer_"+index} rows="2" cols="10"></textarea></td> 
-                          <td className="delete"><a href="#" onClick={(e)=>this.deleteAnswerType(e, index)}><i class="icon wb-trash color-ff5722"></i></a></td>
+                          <td className="flex-base"><textarea className={"input-box multiple_answer_"+index} name={"multiple_answer_"+index+"_1"} rows="2" cols="10"></textarea>
+                              <button type="button" data-count="1" className="btn-default margin-lft-8" onClick={(e)=>this.addMultipleOptions(e, index)}><i class="icon wb-plus color-fff"></i></button>
+                          </td> 
                         </tr>
-                        <hr/>
+                        <tr className="margin-top-5">
+                          <td><label>Correct Answer</label></td>
+                          <td className="flex-base"><textarea className="input-box" name={"multiple_answervalue_"+index} rows="2" cols="10"></textarea>
+                          <input type="hidden" name={"multiple_count_"+index} id={"multiple_count_"+index} />
+                          </td> 
+                        </tr>
+                        <hr />
                   </Fragment>);
       }
       WK = ()=>{

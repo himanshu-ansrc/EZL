@@ -418,10 +418,18 @@ function WK(ques_items){
 	  let total_answers = ques_items.total_answers;
 	  let multipleArray = [], booleanArray = [], numericArray = [];
 	  for(let x=1; x<=total_answers; x++){
-	  	    let booleanJSON  = {} , numericJSON = {};
-	  	    let multipleChoise = ques_items["multiple_answer_"+x];
-	  	    if(multipleChoise)
-               multipleArray.push(multipleChoise);
+	  	    let booleanJSON  = {} , numericJSON = {}, multipleJSON = {};
+
+            if(ques_items["multiple_answervalue_"+x]){
+	            let multipleAnsValue = ques_items["multiple_answervalue_"+x];
+		  	    let multipleCount= ques_items["multiple_count_"+x];
+		  	    multipleJSON["multiple_answer"] = multipleAnsValue;
+		  	    multipleJSON["multiple_count"] = multipleCount;
+		  	    for(let y=1; y<=multipleCount; y++){
+		  	    	multipleJSON["multiple_choice_"+y] = ques_items["multiple_answer_"+x+"_"+y];
+		  	    }	
+            }
+
 	  	    if(ques_items["boolean_variable_"+x])
                booleanJSON['boolean_variable'] = ques_items["boolean_variable_"+x];
 	  	    if(ques_items["boolean_answer_"+x])
@@ -437,6 +445,8 @@ function WK(ques_items){
             if(ques_items["numeric_formatstring_"+x])
                numericJSON['numeric_formatstring'] = ques_items["numeric_formatstring_"+x];
 
+            if(Object.keys(multipleJSON).length!==0)
+               multipleArray.push(multipleJSON)
             if(Object.keys(booleanJSON).length!==0)
                booleanArray.push(booleanJSON)
             if(Object.keys(numericJSON).length!==0) 
@@ -464,6 +474,16 @@ function WK(ques_items){
       }  
       if(multipleArray.length>0){
       	    for(let x of multipleArray){
+                
+                let options = '';
+                for(let y=1; y<=x['multiple_count']; y++){
+                	let k =  (y==x['multiple_answer'])? 'true': 'false';
+                	let j = x['multiple_choice_'+y];
+                    options +=	`<choice>
+					              <distractor><![CDATA[${j}]]></distractor>
+					              <correct>${k}</correct>
+					             </choice>`;
+                }
 	            multipleString += `<multipleChoiceAnswer>
 							          <name><![CDATA[C]]></name>
 							          <weight>100</weight>
@@ -475,22 +495,7 @@ function WK(ques_items){
 							            <property name="scramble" type="string" value="true" />
 							          </answerProperties>
 							          <choices>
-							            <choice>
-							              <distractor><![CDATA[&#8598;]]></distractor>
-							              <correct>false</correct>
-							            </choice>
-							            <choice>
-							              <distractor><![CDATA[&#8599;]]></distractor>
-							              <correct>false</correct>
-							            </choice>
-							            <choice>
-							              <distractor><![CDATA[&#8601;]]></distractor>
-							              <correct>false</correct>
-							            </choice>
-							            <choice>
-							              <distractor><![CDATA[&#8600;]]></distractor>
-							              <correct>true</correct>
-							            </choice>
+							             ${options}
 							          </choices>
 							        </multipleChoiceAnswer>`;
       	    }
