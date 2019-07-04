@@ -405,7 +405,7 @@ function MC(ques_items){
 	  return `<multipleChoice>
 		        <stem><![CDATA[<p>${ques_items.ques_txt}</p>
 		        </stem>
-		         <commonFeedback><![CDATA[<p>Feedback test - ${ques_items.mc_ques_feed}</p>]]>
+		         <commonFeedback><![CDATA[<p>Feedback test - ${ques_items.ques_feed}</p>]]>
 		         </commonFeedback>
 			        <choices>
 			        ${data}
@@ -580,7 +580,7 @@ function WK(ques_items){
 	  answer = booleanString+numericString+multipleString;
   	  let data = `<worksheet>
 	                  <stem><![CDATA[<p>${ques_items.ques_txt}</p></stem>
-			          <commonFeedback><![CDATA[<p>Feedback test - ${ques_items.mc_ques_feed}</p>]]>
+			          <commonFeedback><![CDATA[<p>Feedback test - ${ques_items.ques_feed}</p>]]>
 			          </commonFeedback>
 			          <answers>${answer}</answers>
                   </worksheet>`;

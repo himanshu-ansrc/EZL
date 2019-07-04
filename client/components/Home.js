@@ -5,6 +5,7 @@ import ReactDND from './ReactDND'
 
 class Home extends Component{
     xmlComponentsdata = {};
+    currentSelectedTextarea = '';
 	  state = {
            QType: "SB",
            tableList : [],
@@ -15,7 +16,25 @@ class Home extends Component{
            typeMultiple: []
 	  }
     componentDidMount(){
-         
+         document.addEventListener('contextmenu', function(e) {
+            let a = document.getElementById('custom_right_menu');
+            console.log(e.target);
+            document.getElementById('selected_input').value = e.target.name;
+            if(e.target.classList.contains('input-box')){
+                  a.style.display = 'block';
+                  a.style.top = event.pageY + "px";
+                  a.style.left = event.pageX + "px";
+                  e.preventDefault();   
+            }else{
+                  a.style.display = 'none'; 
+            }
+        }, false);   
+        document.addEventListener('mousedown', function(e){
+            // let a = document.getElementById('custom_right_menu');
+            // if(!e.target.classList.contains('input-box') && (e.target.id!=a.id)){
+            //       a.style.display = 'none'; 
+            // }
+        })  
     }
 	  handleChange = (e)=>{
 	  	 this.setState({ QType: e.target.value })
@@ -69,7 +88,7 @@ class Home extends Component{
       CA = ()=>{
             return (
         			 <tr className="margin-top-5">
-        			   <td><label>Question3</label></td>
+        			   <td><label>Question</label></td>
         			   <td><textarea className="input-box" name="ques_txt" rows="5" cols="30"></textarea></td> 
         			 </tr>
             )
@@ -78,7 +97,7 @@ class Home extends Component{
             return (
                <Fragment>
                  <tr className="margin-top-5">
-                   <td><label>Question3</label></td>
+                   <td><label>Question</label></td>
                    <td><textarea className="input-box" name="ques_txt" rows="5" cols="30"></textarea></td> 
                  </tr>
                  <tr className="margin-top-5">
@@ -87,7 +106,7 @@ class Home extends Component{
                  </tr>
                  <tr className="margin-top-5">
                     <td><label>Common feed</label></td>
-                    <td className="flex-base"><textarea className="input-box" name="mc_ques_feed" rows="2" cols="10"></textarea></td> 
+                    <td className="flex-base"><textarea className="input-box" name="ques_feed" rows="2" cols="10"></textarea></td> 
                  </tr>
                </Fragment>
             )
@@ -180,7 +199,7 @@ class Home extends Component{
                         <tr className="margin-top-5" id={"multiple_divider"+index+"_1"}>
                           <td><label>Choises with Answer</label></td>
                           <td className="flex-base"><textarea className={"input-box multiple_answer_"+index} name={"multiple_answer_"+index+"_1"} rows="2" cols="10"></textarea>
-                              <button type="button" data-count="1" className="btn-default margin-lft-8" onClick={(e)=>this.addMultipleOptions(e, index)}><i class="icon wb-plus color-fff"></i></button>
+                              <button type="button" data-count="1" className="counter-plus margin-lft-8" onClick={(e)=>this.addMultipleOptions(e, index)}><i class="icon wb-plus color-fff"></i></button>
                           </td> 
                         </tr>
                         <tr className="margin-top-5">
@@ -198,6 +217,10 @@ class Home extends Component{
                  <tr className="margin-top-5">
                    <td><label>Question</label></td>
                    <td><textarea className="input-box" name="ques_txt" rows="5" cols="30"></textarea></td> 
+                 </tr>
+                 <tr className="margin-top-5">
+                    <td><label>Common feed</label></td>
+                    <td className="flex-base"><textarea className="input-box" name="ques_feed" rows="2" cols="10"></textarea></td> 
                  </tr>
                  <hr/>
                  {this.state.ansType.length>0 && this.state.ansType.map(x=>x)}
@@ -268,9 +291,27 @@ class Home extends Component{
         //table1 += "</tr></tbody></table>]]>";
         table1 += "</tr></tbody></table>";
         console.log(this.state);
-        document.getElementsByName(this.state.eleId)[0].value = table1;
-        document.getElementById('show_xml').value = vkbeautify.xml(table1);
-        this.xmlComponentsdata['table'] = vkbeautify.xml(table1);
+
+
+                //get the seleected textarea to 
+        let seleectedArea = document.getElementsByName(document.getElementById('selected_input').value)['0'];
+
+        let x = seleectedArea.value;
+        let z = x;
+        console.log(x)
+        let pivot = x.slice(0, seleectedArea.selectionStart).length;
+        
+        let start = '';
+        let end = x.slice(pivot);
+         
+        for(let k=0; k<pivot; k++){
+            start += x[k];
+        }
+
+        console.log(start);
+        console.log(end);
+         
+        seleectedArea.value = start+table1+end;
         document.getElementById('popup_close').click();
         this.addXmlButton("table");
       }
@@ -357,9 +398,38 @@ class Home extends Component{
           }
           console.log(b)
       }
+      openContextMenuActions = (type)=>{
+          if(type>0){
+              let selectedArea = document.getElementsByName(document.getElementById('selected_input').value)['0'];
+              let x = selectedArea.value;
+              let pivot = x.slice(0, selectedArea.selectionStart).length;
+              let start = '';
+              let end = x.slice(pivot);  
+              for(let k=0; k<pivot; k++){
+                  start += x[k];
+              }
+              let attach = '';
+              if(type==1){
+                 attach = '%media:<your_media>.ext%';
+              }else if(type==2){
+                 attach = '%media:<your_mml>.mml%';
+              }
+              selectedArea.value = start+attach+end;
+          }
+
+
+          // this.setState({eleId: 'ques_txt'})
+          // console.log(document.getElementById('selected_input').value)
+          document.getElementById('custom_right_menu').style.display = "none";
+      }
       render(){
       	 return(
            <Fragment>
+              <ul class="custom-menu" id="custom_right_menu">
+                <li data-action="first"><a href="#popup1" onClick={()=>this.openContextMenuActions(0)}>Add Table</a></li>
+                <li data-action="second"><a onClick={()=>this.openContextMenuActions(1)}>Add Image</a></li>
+                <li data-action="third"><a onClick={()=>this.openContextMenuActions(2)}>Add mml</a></li>
+              </ul>
               <div id="popup1" className="overlay">
         				<div className="popup">
         					<a className="close" href="#" id="popup_close">&times;</a>
@@ -402,6 +472,7 @@ class Home extends Component{
                       </tbody>
                     </table>*/}
 									<form method="post" onSubmit={this.dataSubmit} className="" id="main_form">
+                    <input type="hidden" id="selected_input"/>
 										<table className="prob-table">
 										   <tbody>
 										      <tr className="margin-top-5">
@@ -464,11 +535,11 @@ class Home extends Component{
 										   </tbody>
 										</table>									
 									</form>
-                  {/*<table className="prob-table">
+                  <table className="prob-table">
                       <tbody>
                          <tr className="margin-top-5">
                            <td><label>Generate table</label></td>
-                           <td><a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a></td> 
+                           {/*<td><a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a></td>*/} 
                          </tr>
                       </tbody>
                     </table>
@@ -496,12 +567,12 @@ class Home extends Component{
                          </tr>
                       </tbody>
                     </table>
-                    */}
+                    
 			        	 	  </div>
                     <div>
                     	<textarea id="show_xml" rows="30" cols="50" placeholder="Output as XML"></textarea>
                     </div>
-                    <div className="xml-list-box">
+                    {/*<div className="xml-list-box">
                             <div className="margin-top-7">
                               <div id="example1" className="list-group col">
                               {this.state.xmlList.length>0 && this.state.xmlList.map((res)=>{
@@ -514,7 +585,7 @@ class Home extends Component{
                               })}
                               </div>
                             </div>
-                    </div>
+                    </div>*/}
 		        	 </div>
 		        </div>
 	           </main>
