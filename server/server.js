@@ -390,14 +390,30 @@ function questionProperties(){
 }
 
 function MC(ques_items){
-	  let count = ques_items.mc_answer.split("#")[0];
-	  let answer = ques_items.mc_answer.split("#")[1];
+
+
+	        // if(ques_items["multiple_answervalue_"+x]){
+	        //     let multipleAnsValue = ques_items["multiple_answervalue_"+x];
+		  	    // let multipleCount= ques_items["multiple_count_"+x];
+		  	    // multipleJSON["multiple_answer"] = multipleAnsValue;
+		  	    // multipleJSON["multiple_count"] = multipleCount;
+		  	    // for(let y=1; y<=multipleCount; y++){
+		  	    // 	multipleJSON["multiple_choice_"+y] = ques_items["multiple_answer_"+x+"_"+y];
+		  	    // }	
+         //    }
+
+
+	  let multipleAnsValue = ques_items["multiple_answervalue_1"];
+	  let multipleCount = ques_items["multiple_count_1"];
+
+	  // let count = ques_items.mc_answer.split("#")[0];
+	  // let answer = ques_items.mc_answer.split("#")[1];
       let data = ``;
       let alpha = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M'];
-      for(let x=1; x<=count; x++){
-     	  let a = x==answer? 1: 0;
+      for(let x=1; x<=multipleCount; x++){
+     	  let a = x==multipleAnsValue? 1: 0;
   	      data += `<choice>
-	              <distractor><![CDATA[${alpha[x-1]}]]></distractor>
+	              <distractor><![CDATA[${ques_items["multiple_answer_1_"+x]}]]></distractor>
 	                <credit>${a}</credit>
 	              <feedback></feedback>
 	             </choice>`;   	  

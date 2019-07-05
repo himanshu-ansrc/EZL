@@ -100,10 +100,18 @@ class Home extends Component{
                    <td><label>Question</label></td>
                    <td><textarea className="input-box" name="ques_txt" rows="5" cols="30"></textarea></td> 
                  </tr>
-                 <tr className="margin-top-5">
+                  <tr className="margin-top-5" id={"multiple_divider1_1"}>
                     <td><label>Choises with Answer</label></td>
-                    <td className="flex-base"><textarea className="input-box" name="mc_answer" rows="2" cols="10"></textarea></td> 
-                 </tr>
+                    <td className="flex-base"><textarea className={"input-box multiple_answer_1"} name={"multiple_answer_1_1"} rows="2" cols="10"></textarea>
+                        <button type="button" data-count="1" className="counter-plus margin-lft-8" onClick={(e)=>this.addMultipleOptions(e, 1)}><i class="icon wb-plus color-fff"></i></button>
+                    </td> 
+                  </tr>
+                  <tr className="margin-top-5">
+                    <td><label>Correct Answer</label></td>
+                    <td className="flex-base"><textarea className="input-box" name={"multiple_answervalue_1"} rows="2" cols="10"></textarea>
+                    <input type="hidden" name={"multiple_count_1"} id={"multiple_count_1"} />
+                    </td> 
+                  </tr>
                  <tr className="margin-top-5">
                     <td><label>Common feed</label></td>
                     <td className="flex-base"><textarea className="input-box" name="ques_feed" rows="2" cols="10"></textarea></td> 
@@ -191,7 +199,7 @@ class Home extends Component{
            let d = document.createElement('textarea'); 
                d.className="input-box"; d.rows="2"; d.cols="10";
                d.name="multiple_answer_"+index+"_"+e.target.dataset.count;
-               c.appendChild(d)
+               c.appendChild(d);
            document.getElementById("multiple_divider"+index+"_"+dataCount).parentNode.insertBefore(a, document.getElementById("multiple_divider"+index+"_"+dataCount).nextSibling);
       }
       generateMultiple = (index)=>{
