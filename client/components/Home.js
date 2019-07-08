@@ -16,9 +16,9 @@ class Home extends Component{
            typeMultiple: []
 	  }
     componentDidMount(){
+         let flag = false;
          document.addEventListener('contextmenu', function(e) {
             let a = document.getElementById('custom_right_menu');
-            console.log(e.target);
             document.getElementById('selected_input').value = e.target.name;
             if(e.target.classList.contains('input-box')){
                   a.style.display = 'block';
@@ -30,10 +30,15 @@ class Home extends Component{
             }
         }, false);   
         document.addEventListener('mousedown', function(e){
-            // let a = document.getElementById('custom_right_menu');
-            // if(!e.target.classList.contains('input-box') && (e.target.id!=a.id)){
-            //       a.style.display = 'none'; 
-            // }
+            let a = document.getElementById('custom_right_menu');
+            // console.log(e.target);
+             if(e.target.classList.contains('select-menu')){
+                 return;
+             }
+            if(!e.target.classList.contains('input-box')){
+                  a.style.display = 'none'; 
+            }
+            console.log(e.target)
         })  
     }
 	  handleChange = (e)=>{
@@ -66,22 +71,22 @@ class Home extends Component{
     TF = ()=>{
             return (
                <Fragment>
-	              <tr className="margin-top-5">
-      				       <td><label>Question</label></td>
-      			         <td className="flex-base"><textarea className="input-box" name="ques_txt" rows="5" cols="30"></textarea>{/*<a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a>*/}</td> 
-      				  </tr>
-      				  <tr className="margin-top-5">
-      				    <td><label>Common feed</label></td>
-      				    <td className="flex-base"><textarea className="input-box" name="tf_ques_feed" rows="2" cols="10"></textarea>{/*<a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a>*/}</td> 
-      				  </tr>
-      				  <tr className="margin-top-5">
-      				    <td><label>TrueInfo feed</label></td>
-      				    <td className="flex-base"><textarea className="input-box" name="tf_true_feed" rows="2" cols="10"></textarea>{/*<a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a>*/}</td> 
-      				  </tr>
-      				  <tr className="margin-top-5">
-      				    <td><label>FalseInfo feed</label></td>
-      				    <td className="flex-base"><textarea className="input-box" name="tf_false_feed" rows="2" cols="10"></textarea>{/*<a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a>*/}</td> 
-      				  </tr>
+  	              <tr className="margin-top-5">
+        				       <td><label>Question</label></td>
+        			         <td className="flex-base"><textarea className="input-box" name="ques_txt" rows="5" cols="30"></textarea>{/*<a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a>*/}</td> 
+        				  </tr>
+        				  <tr className="margin-top-5">
+        				    <td><label>Common feed</label></td>
+        				    <td className="flex-base"><textarea className="input-box" name="tf_ques_feed" rows="2" cols="10"></textarea>{/*<a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a>*/}</td> 
+        				  </tr>
+        				  <tr className="margin-top-5">
+        				    <td><label>TrueInfo feed</label></td>
+        				    <td className="flex-base"><textarea className="input-box" name="tf_true_feed" rows="2" cols="10"></textarea>{/*<a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a>*/}</td> 
+        				  </tr>
+        				  <tr className="margin-top-5">
+        				    <td><label>FalseInfo feed</label></td>
+        				    <td className="flex-base"><textarea className="input-box" name="tf_false_feed" rows="2" cols="10"></textarea>{/*<a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a>*/}</td> 
+        				  </tr>
                </Fragment>
             )
       }
@@ -378,8 +383,9 @@ class Home extends Component{
         let input = document.getElementById('random_input');
         let {data} = await axios.post('/random-variables', {random_info: input.value});
         document.getElementById('random_input').value = data;
-        document.getElementById('show_xml').value = vkbeautify.xml(data);
-        this.xmlComponentsdata['randomvariable'] = vkbeautify.xml(data);
+        document.getElementById('random_variable').value = data;
+        // document.getElementById('show_xml').value = vkbeautify.xml(data);
+        // this.xmlComponentsdata['randomvariable'] = vkbeautify.xml(data);
         document.getElementById('popup_close').click();
         this.addXmlButton("randomvariable");
       }
@@ -407,7 +413,7 @@ class Home extends Component{
           console.log(b)
       }
       openContextMenuActions = (type)=>{
-          if(type>0){
+          if(type>1){
               let selectedArea = document.getElementsByName(document.getElementById('selected_input').value)['0'];
               let x = selectedArea.value;
               let pivot = x.slice(0, selectedArea.selectionStart).length;
@@ -417,9 +423,9 @@ class Home extends Component{
                   start += x[k];
               }
               let attach = '';
-              if(type==1){
+              if(type==2){
                  attach = '%media:<your_media>.ext%';
-              }else if(type==2){
+              }else if(type==3){
                  attach = '%media:<your_mml>.mml%';
               }
               selectedArea.value = start+attach+end;
@@ -434,9 +440,10 @@ class Home extends Component{
       	 return(
            <Fragment>
               <ul class="custom-menu" id="custom_right_menu">
-                <li data-action="first"><a href="#popup1" onClick={()=>this.openContextMenuActions(0)}>Add Table</a></li>
-                <li data-action="second"><a onClick={()=>this.openContextMenuActions(1)}>Add Image</a></li>
-                <li data-action="third"><a onClick={()=>this.openContextMenuActions(2)}>Add mml</a></li>
+                <li data-action="first"><a href="#popup1" className="select-menu" onClick={()=>this.openContextMenuActions(0)}>Add Table</a></li>
+                <li data-action="fourth"><a href="#random_variables_popup" className="select-menu" onClick={()=>this.openContextMenuActions(1)}>Add random variable</a></li>
+                <li data-action="second"><a className="select-menu" onClick={()=>this.openContextMenuActions(2)}>Add Image</a></li>
+                <li data-action="third"><a className="select-menu" onClick={()=>this.openContextMenuActions(3)}>Add mml</a></li>
               </ul>
               <div id="popup1" className="overlay">
         				<div className="popup">
@@ -481,6 +488,7 @@ class Home extends Component{
                     </table>*/}
 									<form method="post" onSubmit={this.dataSubmit} className="" id="main_form">
                     <input type="hidden" id="selected_input"/>
+                    <input type="hidden" id="random_variable" name="random_variable"/>
 										<table className="prob-table">
 										   <tbody>
 										      <tr className="margin-top-5">
@@ -543,11 +551,12 @@ class Home extends Component{
 										   </tbody>
 										</table>									
 									</form>
-                  <table className="prob-table">
+
+                  {/*<table className="prob-table">
                       <tbody>
                          <tr className="margin-top-5">
                            <td><label>Generate table</label></td>
-                           {/*<td><a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a></td>*/} 
+                           {/*<td><a href="#popup1" className="btn-default" onClick={()=>this.setState({eleId: 'ques_txt'})}>Add</a></td>
                          </tr>
                       </tbody>
                     </table>
@@ -575,6 +584,7 @@ class Home extends Component{
                          </tr>
                       </tbody>
                     </table>
+                    */}
                     
 			        	 	  </div>
                     <div>

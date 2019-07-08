@@ -330,12 +330,10 @@ app.post('/random-variables', (req,res)=>{
 	 let allVariables = '';
 	 for(let x of randomList){
          let varible = x.split('\n');
-         console.log(varible);
          let listData = '';
          varible = varible.filter(function (el) {
 		  return el != '';
 		 });
-		 console.log(varible)
          for(let y=1; y<varible.length; y++){
          	 listData += `<row><![CDATA[${varible[y]}]]></row>`;
          }
@@ -430,7 +428,6 @@ function MC(ques_items){
 }
 
 function WK(ques_items){
-	  console.log(ques_items)
 	  let total_answers = ques_items.total_answers;
 	  let multipleArray = [], booleanArray = [], numericArray = [];
 	  for(let x=1; x<=total_answers; x++){
@@ -470,9 +467,6 @@ function WK(ques_items){
            
 	  }
 
-	  console.log(booleanArray)
-	  console.log(multipleArray);
-	  console.log(numericArray);
       
       let booleanString = '', numericString = '', multipleString = '';
       if(booleanArray.length>0){
@@ -592,7 +586,6 @@ function WK(ques_items){
 			//           </choices>
 			//         </multipleChoiceAnswer>`;
 	  // }
-	  console.log(numericString);
 	  answer = booleanString+numericString+multipleString;
   	  let data = `<worksheet>
 	                  <stem><![CDATA[<p>${ques_items.ques_txt}</p></stem>
@@ -641,7 +634,13 @@ app.post('/', (req, res)=>{
            question += questionProperties();
            question += WK(req.body);
         }
-        text = `${question}
+         
+
+        if(req.body.random_variable && req.body.random_variable!=""){
+        	console.log(req.body.random_variable)
+            text += (req.body.random_variable).toString();
+        }
+        text = `${question}${req.body.random_variable}
                </question>`;
         
         let xml = `<questionSet>
