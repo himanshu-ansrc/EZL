@@ -3,6 +3,10 @@ import axios from 'axios'
 import Test from './Test';
 import ReactDND from './ReactDND'
 
+import FroalaEditor from 'froala-editor'
+// Load a plugin.
+import 'froala-editor/js/plugins/align.min.js'
+
 class Home extends Component{
     xmlComponentsdata = {};
     currentSelectedTextarea = '';
@@ -16,6 +20,7 @@ class Home extends Component{
            typeMultiple: []
 	  }
     componentDidMount(){
+         new FroalaEditor('#edit')
          let flag = false;
          document.addEventListener('contextmenu', function(e) {
             let a = document.getElementById('custom_right_menu');
@@ -439,6 +444,8 @@ class Home extends Component{
       render(){
       	 return(
            <Fragment>
+             
+                      
               <ul class="custom-menu" id="custom_right_menu">
                 <li data-action="first"><a href="#popup1" className="select-menu" onClick={()=>this.openContextMenuActions(0)}>Add Table</a></li>
                 <li data-action="fourth"><a href="#random_variables_popup" className="select-menu" onClick={()=>this.openContextMenuActions(1)}>Add random variable</a></li>
@@ -514,6 +521,7 @@ class Home extends Component{
 										          </select>
 											    </td> 
 											  </tr>
+
 											  <tr className="margin-top-5">
 											    <td><label>Level</label></td>
 											    <td><input className="input-box" type="text" name="ques_level" value="Easy" placeholder="Enter question objective"/></td> 
