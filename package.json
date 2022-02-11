@@ -18,7 +18,7 @@
     "babel-polyfill": "^6.26.0",
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
-    "froala-editor": "^3.0.2",
+    "froala-editor": "^4.0.7",
     "immutability-helper": "^3.0.1",
     "jsontoxml": "^1.0.1",
     "react": "^16.8.5",
